@@ -2,7 +2,7 @@
 
 @theme {
   --color-color1: #0c1713;
-  --color-color2: #73683b;
+  --color-color2: #5398be;
   --color-color3: #70566d;
   --color-color4: #d88373;
   --color-color5: #f5e2c8;
@@ -10,4 +10,22 @@
 
 button {
   @apply cursor-pointer;
+}
+
+.triangle {
+  @apply [clip-path:polygon(50%_0%,0%_100%,100%_100%)];
+}
+
+.card {
+  transition: none;
+}
+
+.card.slide-right {
+  transition: transform 500ms;
+  transform: translateX(-100vw);
+}
+
+.card.slide-left {
+  transition: transform 500ms;
+  transform: translateX(100vw);
 }

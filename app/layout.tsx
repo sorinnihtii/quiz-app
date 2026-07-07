@@ -28,14 +28,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-color4">
-        <nav className="flex justify-center gap-16 pt-8 text-color5 font-medium underline underline-offset-8 tracking-wider">
+      <body className="flex flex-col size-full overflow-hidden bg-color4">
+        <nav className="flex justify-center gap-16 mt-8 mb-10 text-color5 font-medium underline underline-offset-8 tracking-wider">
           <Link href="/">Home</Link>
           <Link href="/about">About</Link>
           <Link href="/settings">Settings</Link>
           <Link href="/create">Create Quiz</Link>
         </nav>
-        <main className="flex flex-1 items-center justify-center m-12 rounded-2xl bg-color5">{children}</main>
+        <main className="size-full">{children}</main>
       </body>
     </html>
   );
