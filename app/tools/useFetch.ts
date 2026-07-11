@@ -1,8 +1,9 @@
 export default async function useFetch(url: string) {
     try {
         const response = await fetch(url);
+        
 
-        if(!response?.ok) console.log("error caught")
+        if(!response?.ok) throw new Error(`HTTP error: ${response.status}`);
             
         return response.json();
     }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import Navbar from "./components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,19 +23,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  function openSettings() {}
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex flex-col size-full overflow-hidden bg-black">
-        <nav className="flex justify-center gap-16 mt-8 mb-10 text-white font-medium underline underline-offset-8 tracking-wider">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/settings">Settings</Link>
-          <Link href="/create">Create Quiz</Link>
-        </nav>
-        <main className="size-full">{children}</main>
+      <body className="grid grid-rows-[15%_85%] h-screen w-screen overflow-auto bg-black">
+        <Navbar />
+        <main className="">{children}</main>
       </body>
     </html>
   );

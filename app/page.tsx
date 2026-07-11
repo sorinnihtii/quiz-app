@@ -2,20 +2,41 @@
 
 import { useEffect, useState } from "react";
 import useFetch from "./tools/useFetch";
+import { useRouter } from "next/navigation";
+import CardSlider from "./components/cardSlider";
+import { useSettings } from "./store/settings";
 
 export default function Home() {
-  type Category = {
-    id: number;
-    name: string;
-  };
-  type Difficuly = "easy" | "medium" | "hard";
-  type QuestionType = "mutliple-choise" | "true-false";
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { amount } = useSettings();
+  const router = useRouter();
+
+  const [categories, setCategories] = useState<DisplayContent[]>([]);
+  const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
+  const [questionType, setQuestionType] = useState<QuestionType>("any");
 
   async function getCategories() {
-    const data = await useFetch("https://opentdb.com/api_category.php");
-    console.log("categories:", data);
-    setCategories(data.trivia_categories);
+    const stored = localStorage.getItem("categories");
+    if (stored) {
+      setCategories(JSON.parse(stored));
+    } else {
+      const data = await useFetch("https://opentdb.com/api_category.php");
+      setCategories(data?.trivia_categories);
+      localStorage.setItem(
+        "categories",
+        JSON.stringify(data?.trivia_categories),
+      );
+    }
+  }
+
+  async function startQuiz() {
+    const categoryParameter = `&category=${categories[currentIndex].id}`;
+    const difficultyParameter =
+      difficulty != "any" ? `&difficulty=${difficulty}` : "";
+    const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
+
+    router.push(
+      `/quiz?amount=${amount}${categoryParameter}${difficultyParameter}${typeParameter}`,
+    );
   }
 
   useEffect(() => {
@@ -24,100 +45,104 @@ export default function Home() {
 
   const quizCount = categories.length - 1;
 
-  const [currentQuiz, setCurrentQuiz] = useState(0);
-  const [previousQuiz, setPreviousQuiz] = useState(0); // for animation purposes
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState(0); // for animation purposes
 
-  console.log(currentQuiz);
-
-  const [isAnimating, setIsAnimating] = useState({
+  const [isAnimating, setIsAnimating] = useState<Animating>({
     state: false,
-    direction: "right" as "right" | "left",
+    direction: "left",
   });
 
   function updateCurrentQuiz(direction: string) {
     if (direction === "right")
-      setCurrentQuiz((prev) => {
+      setCurrentIndex((prev) => {
         if (prev === quizCount) return 0;
         else return prev + 1;
       });
     else
-      setCurrentQuiz((prev) => {
+      setCurrentIndex((prev) => {
         if (prev === 0) return quizCount;
         else return prev - 1;
       });
   }
 
-  function handleTransitionEnd() {
-    {
-      setIsAnimating((prev) => ({
-        ...prev,
-        state: false,
-      }));
-      setPreviousQuiz(currentQuiz);
-      console.log("transition ended");
-    }
-  }
-
   return (
     <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
+      <CardSlider
+        content={categories}
+        isAnimating={isAnimating}
+        setIsAnimating={setIsAnimating}
+        currentIndex={currentIndex}
+        previousIndex={previousIndex}
+        setPreviousIndex={setPreviousIndex}
+      />
+
       <section
         className="
-          flex items-center px-[10vw] gap-[20vw] overflow-x-hidden w-max overflow-hidden translate-x-[-100vw]
-          *:flex *:flex-col *:items-center *:justify-center *:gap-4 *:h-full *:w-[80vw] *:rounded-2xl *:bg-[#FFFFFF]
-          [&>div>*]:w-180 [&>div>*]:text-center [&>div>h1]:text-7xl [&>div>h1]:uppercase "
+          grid grid-cols-3 items-center justify-center w-[80vw] ml-[10vw] *:font-semibold *:text-black
+          [&>div]:flex [&>div]:items-center [&>div]:justify-center
+          [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1
+          [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-white
+          [&>div>select]:hover:scale-110 [&>div>select]:focus:scale-110 [&>div>select]:focus:border-0
+          "
       >
-        {categories.length && (
-          <>
-            <div
-              className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
-            >
-              <h1>{categories[currentQuiz].name}</h1>
-            </div>
+        <div className="gap-4">
+          <select
+            value={difficulty}
+            onChange={(e) =>
+              setDifficulty(e.target.value as QuestionDifficulty)
+            }
+          >
+            <option value="any">Any Difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
 
-            <div
-              className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
-              onTransitionEnd={handleTransitionEnd}
-            >
-              <h1>{categories[previousQuiz].name}</h1>
-            </div>
+        <div className="gap-12 [&_button]:bg-white [&_button]:duration-100">
+          <button
+            className="triangle h-6 aspect-square -rotate-90 hover:scale-125 focus:scale-125"
+            onClick={() => {
+              if (isAnimating.state) return;
+              const direction = "left";
+              setIsAnimating({
+                state: true,
+                direction: direction,
+              });
+              updateCurrentQuiz(direction);
+            }}
+          ></button>
+          <button
+            className="px-4 py-1.5 rounded-xl hover:scale-110 focus:scale-110"
+            onClick={startQuiz}
+          >
+            START QUIZ
+          </button>
+          <button
+            className="triangle h-6 aspect-square rotate-90 hover:scale-125 focus:scale-125"
+            onClick={() => {
+              if (isAnimating.state) return;
+              const direction = "right";
+              setIsAnimating({
+                state: true,
+                direction: direction,
+              });
+              updateCurrentQuiz(direction);
+            }}
+          ></button>
+        </div>
 
-            <div
-              className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
-            >
-              <h1>{categories[currentQuiz].name}</h1>
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className="flex items-center justify-center w-screen gap-12 [&_button]:bg-white [&_button]:duration-100">
-        <button
-          className="triangle h-8 aspect-square -rotate-90 hover:scale-125"
-          onClick={() => {
-            const direction = "left";
-            setIsAnimating({
-              state: true,
-              direction: direction,
-            });
-            updateCurrentQuiz(direction);
-          }}
-          disabled={isAnimating.state}
-        ></button>
-        <button className="px-4 py-1.5 rounded-xl text-xl text-black font-semibold hover:scale-110">
-          START QUIZ
-        </button>
-        <button
-          className="triangle h-8 aspect-square rotate-90 hover:scale-125"
-          onClick={() => {
-            const direction = "right";
-            setIsAnimating({
-              state: true,
-              direction: direction,
-            });
-            updateCurrentQuiz(direction);
-          }}
-          disabled={isAnimating.state}
-        ></button>
+        <div className="gap-4">
+          <select
+            value={questionType}
+            onChange={(e) => setQuestionType(e.target.value as QuestionType)}
+          >
+            <option value="any">Any Type</option>
+            <option value="boolean">True / False</option>
+            <option value="multiple">Multiple Choise</option>
+          </select>
+        </div>
       </section>
     </div>
   );
