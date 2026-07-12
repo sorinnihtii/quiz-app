@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import useFetch from "../tools/useFetch";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
+import fetchData from "../tools/fetchData";
 
 function shuffle(array: Answer[]) {
   const shuffled = [...array];
@@ -21,36 +21,33 @@ function shuffle(array: Answer[]) {
 const Quiz = () => {
   const searchParams = useSearchParams();
 
-  const params = {
-    amount: searchParams.get("amount"),
-    category: searchParams.get("category"),
-    difficulty: searchParams.get("difficulty"),
-    type: searchParams.get("type"),
-  };
-
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [displayQuestions, setDisplayQuestions] = useState<DisplayContent[]>(
-    [],
-  );
-  const [isAnimating, setIsAnimating] = useState<Animating>({
-    state: false,
-    direction: "left",
-  });
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState(currentIndex); // for animation
+  const [displayContent, setDisplayContent] = useState<DisplayContent[]>([]);
+  const [score, setScore] = useState<number>(0);
 
   async function getQuestions() {
+    const params = {
+      amount: searchParams.get("amount"),
+      category: searchParams.get("category"),
+      difficulty: searchParams.get("difficulty"),
+      type: searchParams.get("type"),
+    };
+
     const amountParameter = `?amount=${params.amount}`;
     const categoryParameter = `&category=${params.category}`;
     const difficultyParameter =
       params.difficulty != null ? `&difficulty=${params.difficulty}` : "";
     const typeParameter = params.type != null ? `&type=${params.type}` : "";
 
-    const url = `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}`;
-    const data = await useFetch(url);
+    const data = await fetchData(
+      `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}`,
+    );
+
     if (Array.isArray(data?.results)) {
       setQuestions(data.results);
-      let questionsList = [] as DisplayContent[];
+
+      let questionsList: DisplayContent[] = [];
+
       data.results.map((question: Question, index: number) => {
         const entry: DisplayContent[] = [
           {
@@ -60,7 +57,8 @@ const Quiz = () => {
         ];
         questionsList = [...questionsList, ...entry];
       });
-      setDisplayQuestions(questionsList);
+
+      setDisplayContent(questionsList);
     }
   }
 
@@ -68,12 +66,18 @@ const Quiz = () => {
     getQuestions();
   }, []);
 
-  const previousQuestion: undefined | Question = questions[previousIndex]; // for animation
+  const [isAnimating, setIsAnimating] = useState<Animating>({
+    state: false,
+    direction: "left",
+  });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [delayedIndex, setDelayedIndex] = useState(currentIndex); // for animation
+  const delayedQuestion: undefined | Question = questions[delayedIndex];
 
   const currentAnswers = useMemo(() => {
-    if (!previousQuestion) return [];
+    if (!delayedQuestion) return [];
 
-    const incorrectAnswers: Answer[] = previousQuestion.incorrect_answers.map(
+    const incorrectAnswers: Answer[] = delayedQuestion.incorrect_answers.map(
       (answer) => ({
         value: answer,
         correct: false,
@@ -81,52 +85,57 @@ const Quiz = () => {
     );
     const correctAnswer = [
       {
-        value: previousQuestion.correct_answer,
+        value: delayedQuestion.correct_answer,
         correct: true,
       },
     ];
 
-    if (previousQuestion.type === "boolean") {
-      return previousQuestion.correct_answer === "True"
+    if (delayedQuestion.type === "boolean") {
+      return delayedQuestion.correct_answer === "True"
         ? [...correctAnswer, ...incorrectAnswers]
         : [...incorrectAnswers, ...correctAnswer];
     }
     return shuffle([...incorrectAnswers, ...correctAnswer]);
-  }, [previousQuestion]);
+  }, [delayedQuestion]);
 
-  console.log("questions:", questions);
+  console.log(currentIndex, displayContent.length);
 
   return (
     <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-x-hidden">
       <CardSlider
-        content={displayQuestions}
+        content={displayContent}
         isAnimating={isAnimating}
         setIsAnimating={setIsAnimating}
         currentIndex={currentIndex}
-        previousIndex={previousIndex}
-        setPreviousIndex={setPreviousIndex}
+        delayedIndex={delayedIndex}
+        setDelayedIndex={setDelayedIndex}
+        score={score}
       />
       <section className="flex w-[80vw] h-full items-center justify-center ml-[10vw] gap-10">
         {currentAnswers &&
           currentAnswers.map((answer) => (
             <button
-              className={`px-4 py-1.5 rounded-md font-semibold hover:scale-110 ${isAnimating.state === true ? (answer.correct ? "bg-green-500" : "bg-red-500") : "bg-white"}`}
               key={answer.value}
+              className={`px-4 py-1.5 rounded-md font-semibold hover:scale-110
+                ${isAnimating.state ? (answer.correct ? "bg-green-500" : "bg-red-500") : "bg-white"}`}
               onClick={() => {
                 if (isAnimating.state) return;
-                setCurrentIndex((prev) => {
-                  if (prev < questions.length - 1) return prev + 1;
-                  else return prev;
-                });
+                setCurrentIndex((prev) => prev + 1);
                 setIsAnimating({
                   state: true,
                   direction: "right",
                 });
+                if (answer.correct) setScore((prev) => prev + 1);
               }}
             >
               {decode(answer.value)}
             </button>
           ))}
+        {currentIndex === displayContent.length && (
+          <button className="px-4 py-1.5 rounded-md font-semibold hover:scale-110 bg-white">
+            New Quiz
+          </button>
+        )}
       </section>
     </div>
   );

@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
+import Card from "./card";
 import { decode } from "he";
 
 interface Props {
@@ -6,8 +7,9 @@ interface Props {
   isAnimating: Animating;
   setIsAnimating: Dispatch<SetStateAction<Animating>>;
   currentIndex: number;
-  previousIndex: number;
-  setPreviousIndex: Dispatch<SetStateAction<number>>;
+  delayedIndex: number;
+  setDelayedIndex: Dispatch<SetStateAction<number>>;
+  score?: number;
 }
 
 const CardSlider = ({
@@ -15,49 +17,70 @@ const CardSlider = ({
   isAnimating,
   setIsAnimating,
   currentIndex,
-  previousIndex,
-  setPreviousIndex,
+  delayedIndex,
+  setDelayedIndex,
+  score,
 }: Props) => {
   function handleTransitionEnd() {
-    {
-      setIsAnimating((prev) => ({
-        ...prev,
-        state: false,
-      }));
-      setPreviousIndex(currentIndex);
-      console.log("transition ended");
-    }
+    setIsAnimating((prev) => ({
+      ...prev,
+      state: false,
+    }));
+    setDelayedIndex(currentIndex);
   }
 
-  console.log("index", currentIndex, isAnimating);
+  console.log(content.length, score);
+
+  function getPerformance() {
+    if (!score) return "";
+    if (score === content.length) return "Perfect!";
+    if (score / content.length >= 0.6) return "Well done!";
+    if (score / content.length >= 0.4) return "Not bad!";
+    return "Better luck next time!";
+  }
+
+  function getTitle(index: number) {
+    if (index < content.length) return content[index]?.name;
+    else return score ? getPerformance() : "";
+  }
+
+  function getSubtitle(index: number) {
+    if (!score) return;
+    return index === content.length ? `Score: ${score}/${content.length}` : "";
+  }
+
+  const animation = isAnimating.state
+    ? isAnimating.direction === "right"
+      ? "slide-right"
+      : "slide-left"
+    : "";
 
   return (
     <section
       className="
-          flex items-center px-[10vw] gap-[20vw] overflow-x-hidden w-max overflow-hidden translate-x-[-100vw]
-          *:flex *:flex-col *:items-center *:justify-center *:h-full *:w-[80vw] *:rounded-2xl *:bg-[#FFFFFF]
-          [&>div>h1]:w-[50%] [&>div>*]:w-180 [&>div>*]:text-center [&>div>h1]:text-5xl [&>div>h1]:uppercase "
+        flex items-center px-[10vw] gap-[20vw] overflow-x-hidden w-max overflow-hidden translate-x-[-100vw]
+        [&>div]:flex [&>div]:flex-col [&>div]:items-center [&>div]:justify-center [&>div]:h-full [&>div]:w-[80vw] [&>div]:gap-2
+        [&>div]:rounded-2xl [&>div]:bg-[#FFFFFF]
+        [&>div>h1]:w-[50%] [&>div>*]:w-[50%] [&>div>*]:text-center [&>div>h1]:text-5xl"
     >
-      {content.length && (
+      {content.length > 0 && (
         <>
-          <div
-            className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
-          >
-            <h1>{decode(content[currentIndex].name)}</h1>
-          </div>
-
-          <div
-            className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
+          <Card
+            title={decode(getTitle(currentIndex))}
+            subtitle={getSubtitle(currentIndex)}
+            animation={animation}
+          />
+          <Card
+            title={decode(getTitle(delayedIndex))}
+            subtitle={getSubtitle(delayedIndex)}
+            animation={animation}
             onTransitionEnd={handleTransitionEnd}
-          >
-            <h1>{decode(content[previousIndex].name)}</h1>
-          </div>
-
-          <div
-            className={`card ${isAnimating.state ? (isAnimating.direction === "right" ? "slide-right" : "slide-left") : ""}`}
-          >
-            <h1>{decode(content[currentIndex].name)}</h1>
-          </div>
+          />
+          <Card
+            title={decode(getTitle(currentIndex))}
+            subtitle={getSubtitle(currentIndex)}
+            animation={animation}
+          />
         </>
       )}
     </section>

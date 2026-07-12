@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import useFetch from "./tools/useFetch";
+import fetchData from "./tools/fetchData";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
 
 export default function Home() {
-  const { amount } = useSettings();
   const router = useRouter();
+  const { amount } = useSettings();
 
   const [categories, setCategories] = useState<DisplayContent[]>([]);
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
@@ -19,7 +19,7 @@ export default function Home() {
     if (stored) {
       setCategories(JSON.parse(stored));
     } else {
-      const data = await useFetch("https://opentdb.com/api_category.php");
+      const data = await fetchData("https://opentdb.com/api_category.php");
       setCategories(data?.trivia_categories);
       localStorage.setItem(
         "categories",
@@ -46,14 +46,14 @@ export default function Home() {
   const quizCount = categories.length - 1;
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState(0); // for animation purposes
+  const [delayedIndex, setDelayedIndex] = useState(0); // for animation purposes
 
   const [isAnimating, setIsAnimating] = useState<Animating>({
     state: false,
     direction: "left",
   });
 
-  function updateCurrentQuiz(direction: string) {
+  function updateCurrentIndex(direction: string) {
     if (direction === "right")
       setCurrentIndex((prev) => {
         if (prev === quizCount) return 0;
@@ -73,8 +73,8 @@ export default function Home() {
         isAnimating={isAnimating}
         setIsAnimating={setIsAnimating}
         currentIndex={currentIndex}
-        previousIndex={previousIndex}
-        setPreviousIndex={setPreviousIndex}
+        delayedIndex={delayedIndex}
+        setDelayedIndex={setDelayedIndex}
       />
 
       <section
@@ -110,7 +110,7 @@ export default function Home() {
                 state: true,
                 direction: direction,
               });
-              updateCurrentQuiz(direction);
+              updateCurrentIndex(direction);
             }}
           ></button>
           <button
@@ -128,7 +128,7 @@ export default function Home() {
                 state: true,
                 direction: direction,
               });
-              updateCurrentQuiz(direction);
+              updateCurrentIndex(direction);
             }}
           ></button>
         </div>

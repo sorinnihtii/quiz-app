@@ -23,7 +23,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  function openSettings() {}
   return (
     <html
       lang="en"
