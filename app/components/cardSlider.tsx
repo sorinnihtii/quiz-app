@@ -29,8 +29,6 @@ const CardSlider = ({
     setDelayedIndex(currentIndex);
   }
 
-  console.log(content.length, score);
-
   function getPerformance() {
     if (!score) return "";
     if (score === content.length) return "Perfect!";

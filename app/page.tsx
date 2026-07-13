@@ -1,46 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import fetchData from "./tools/fetchData";
+import { SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
 
 export default function Home() {
   const router = useRouter();
-  const { amount } = useSettings();
+  const { amount, disableToken } = useSettings();
+
+  const [token, setToken] = useState("");
 
   const [categories, setCategories] = useState<DisplayContent[]>([]);
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
   const [questionType, setQuestionType] = useState<QuestionType>("any");
 
-  async function getCategories() {
-    const stored = localStorage.getItem("categories");
+  async function getData(
+    url: string,
+    propertyName: string,
+    setState: SetStateAction<any>,
+  ) {
+    const stored = localStorage.getItem(propertyName);
     if (stored) {
-      setCategories(JSON.parse(stored));
+      setState(JSON.parse(stored));
     } else {
-      const data = await fetchData("https://opentdb.com/api_category.php");
-      setCategories(data?.trivia_categories);
-      localStorage.setItem(
-        "categories",
-        JSON.stringify(data?.trivia_categories),
-      );
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
+      const data = await response.json();
+
+      if (!data) return;
+      setState(data[propertyName]);
+      localStorage.setItem(propertyName, JSON.stringify(data[propertyName]));
     }
   }
 
   async function startQuiz() {
+    const amountParameter = `?amount=${amount}`;
+    const tokenParameter = disableToken ? "" : `&token=${token}`;
     const categoryParameter = `&category=${categories[currentIndex].id}`;
     const difficultyParameter =
       difficulty != "any" ? `&difficulty=${difficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
 
     router.push(
-      `/quiz?amount=${amount}${categoryParameter}${difficultyParameter}${typeParameter}`,
+      `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
     );
   }
 
   useEffect(() => {
-    getCategories();
+    getData(
+      "https://opentdb.com/api_category.php",
+      "trivia_categories",
+      setCategories,
+    );
+    getData(
+      "https://opentdb.com/api_token.php?command=request",
+      "token",
+      setToken,
+    );
   }, []);
 
   const quizCount = categories.length - 1;

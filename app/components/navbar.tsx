@@ -6,7 +6,7 @@ import { useSettings } from "../store/settings";
 
 const Navbar = () => {
   const [isSettingsVisible, setIsSettingsVisble] = useState(false);
-  const { amount, setAmount } = useSettings();
+  const { amount, setAmount, disableToken, setDisableToken } = useSettings();
 
   function resetToDefault() {
     setAmount(10);
@@ -28,8 +28,13 @@ const Navbar = () => {
             </button>
           </section>
 
-          <section className="grid grid-cols-2 divide-x divide-black [&>div]:mb-auto [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4">
-            <div className="flex justify-center items-start w-full ml-auto gap-3">
+          <section
+            className="
+              grid grid-cols-2 divide-x divide-black
+              [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
+              [&>div]:mb-auto [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4"
+          >
+            <div>
               <label htmlFor="amount">Questions per Quiz</label>
               <input
                 id="amount"
@@ -41,7 +46,15 @@ const Navbar = () => {
                 className="w-12 border-2 text-center rounded-md"
               />
             </div>
-            <div></div>
+            <div>
+              <label htmlFor="disableToken">Disable token</label>
+              <input
+                id="disableToken"
+                type="checkbox"
+                checked={disableToken}
+                onChange={(e) => setDisableToken(e.target.checked)}
+              />
+            </div>
           </section>
 
           <section className="flex items-center justify-center gap-8 *:tracking-wide *:px-4 *:py-0.5 *:rounded-sm *:bg-black *:text-white">
