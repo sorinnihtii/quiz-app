@@ -39,11 +39,11 @@ export default function Home() {
 
   async function startQuiz() {
     const amountParameter = `?amount=${amount}`;
-    const tokenParameter = disableToken ? "" : `&token=${token}`;
     const categoryParameter = `&category=${categories[currentIndex].id}`;
     const difficultyParameter =
       difficulty != "any" ? `&difficulty=${difficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
+    const tokenParameter = disableToken ? "" : `&token=${token}`;
 
     router.push(
       `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,

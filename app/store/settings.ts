@@ -7,11 +7,21 @@ type AppSettings = {
     setDisableToken: (newValue: boolean) => void
 }
 
+const amount =
+  typeof window !== "undefined"
+    ? Number(localStorage.getItem("amount")) || 10
+    : 10;
+
+const disableToken =
+  typeof window !== "undefined"
+    ? localStorage.getItem("disableToken") === "true"
+    : false;
+
 export const useSettings = create<AppSettings>((set) => ({
-    amount: 10,
+    amount: amount,
     setAmount: (newAmount) =>
         set({ amount: newAmount }),
-    disableToken: false,
+    disableToken: disableToken,
     setDisableToken: (newValue) =>
         set({ disableToken: newValue})
 }))

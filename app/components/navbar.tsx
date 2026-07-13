@@ -8,9 +8,6 @@ const Navbar = () => {
   const [isSettingsVisible, setIsSettingsVisble] = useState(false);
   const { amount, setAmount, disableToken, setDisableToken } = useSettings();
 
-  function resetToDefault() {
-    setAmount(10);
-  }
   return (
     <>
       {isSettingsVisible && (
@@ -42,7 +39,9 @@ const Navbar = () => {
                 min="1"
                 max="50"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(e) => {
+                  setAmount(Number(e.target.value));
+                }}
                 className="w-12 border-2 text-center rounded-md"
               />
             </div>
@@ -52,7 +51,10 @@ const Navbar = () => {
                 id="disableToken"
                 type="checkbox"
                 checked={disableToken}
-                onChange={(e) => setDisableToken(e.target.checked)}
+                onChange={(e) => {
+                  setDisableToken(e.target.checked);
+                }}
+                className="h-3.5 aspect-square"
               />
             </div>
           </section>
@@ -61,7 +63,18 @@ const Navbar = () => {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                resetToDefault();
+                localStorage.setItem("amount", String(amount));
+                localStorage.setItem("disableToken", String(disableToken));
+                window.alert("your settings were saved succesfully");
+              }}
+            >
+              Save
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setAmount(10);
+                setDisableToken(false);
               }}
             >
               Reset to Default

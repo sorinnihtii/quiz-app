@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
+import ErrorDisplay from "../components/errorDisplay";
 
 function shuffle(array: Answer[]) {
   const shuffled = [...array];
@@ -25,10 +26,10 @@ const Quiz = () => {
 
   const params = {
     amount: searchParams.get("amount"),
-    token: searchParams.get("token"),
     category: searchParams.get("category"),
     difficulty: searchParams.get("difficulty"),
     type: searchParams.get("type"),
+    token: searchParams.get("token"),
   };
 
   const [responseCode, setResponseCode] = useState(0);
@@ -38,13 +39,20 @@ const Quiz = () => {
   const [displayContent, setDisplayContent] = useState<DisplayContent[]>([]);
   const [score, setScore] = useState<number>(0);
 
+  const [isAnimating, setIsAnimating] = useState<Animating>({
+    state: false,
+    direction: "left",
+  });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [delayedIndex, setDelayedIndex] = useState(currentIndex); // for animation
+
   async function getQuestions() {
     const amountParameter = `?amount=${params.amount}`;
-    const tokenParameter = `&token=${params.token}`;
     const categoryParameter = `&category=${params.category}`;
     const difficultyParameter =
       params.difficulty != null ? `&difficulty=${params.difficulty}` : "";
     const typeParameter = params.type != null ? `&type=${params.type}` : "";
+    const tokenParameter = disableToken ? "" : `&token=${params.token}`;
 
     try {
       const response = await fetch(
@@ -84,18 +92,12 @@ const Quiz = () => {
     }
   }
 
-  console.log("error:", error?.message);
+  console.log("questions and displayed content:", questions, displayContent);
 
   useEffect(() => {
     getQuestions();
   }, []);
 
-  const [isAnimating, setIsAnimating] = useState<Animating>({
-    state: false,
-    direction: "left",
-  });
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [delayedIndex, setDelayedIndex] = useState(currentIndex); // for animation
   const delayedQuestion: undefined | Question = questions[delayedIndex];
 
   const currentAnswers = useMemo(() => {
@@ -127,6 +129,39 @@ const Quiz = () => {
       `https://opentdb.com/api_token.php?command=reset&token=${params.token}`,
     );
     getQuestions();
+  }
+
+  function getErrorMessage() {
+    if (responseCode === 1)
+      return "No Results Could not return results. The API doesn't have enough questions for your query.";
+    if (responseCode === 2)
+      return "Arguements passed in aren't valid. (Ex. Amount = Five)";
+    if (responseCode === 3)
+      return "Your Session Token does not exist. Try resetting or disabling it. Node: this might result in duplicate questions";
+    if (responseCode === 4)
+      return "Your Session Token has returned all possible questions for the specified query. Reset your token or try changing the quiz category, difficulty or questions type.";
+    if (responseCode === 5 || error?.message === "HTTP 429")
+      return "Too many requests. Try again in a few seconds";
+    return "Unknown error";
+  }
+
+  const [startedNewQuiz, setStartedNewQuiz] = useState(false);
+
+  useEffect(() => {
+    if (!isAnimating.state && startedNewQuiz) {
+      setScore(0);
+      setStartedNewQuiz(false);
+    }
+  }, [isAnimating.state, startNewQuiz]);
+
+  async function startNewQuiz() {
+    await getQuestions();
+    setStartedNewQuiz(true);
+    setCurrentIndex(0);
+    setIsAnimating({
+      state: true,
+      direction: "right",
+    });
   }
 
   return (
@@ -162,62 +197,23 @@ const Quiz = () => {
                   {decode(answer.value)}
                 </button>
               ))}
-            {currentIndex === displayContent.length && (
-              <button className="px-4 py-1.5 rounded-md font-semibold hover:scale-110 bg-white">
+            {currentIndex === displayContent.length && !isAnimating.state && (
+              <button
+                className="px-4 py-1.5 rounded-md font-semibold hover:scale-110 bg-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  startNewQuiz();
+                }}
+              >
                 New Quiz
               </button>
             )}
           </section>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-full p-20 pt-10">
-          <div className="flex flex-col items-center justify-center gap-2 bg-white h-[80vh] w-[80vw] rounded-2xl *:w-[50%] *:text-center">
-            {error && (
-              <>
-                <h1 className="font-semibold text-3xl text-red-500">
-                  {error.name}
-                  {": "}
-                  {error.message}
-                </h1>
-                <h2 className="text-black">
-                  {error.message == "HTTP 429"
-                    ? "Too many requests. Try again in a few seconds"
-                    : ""}
-                </h2>
-              </>
-            )}
-            {responseCode === 4 && (
-              <>
-                <h1 className="font-semibold text-3xl text-red-500">
-                  Out of Questions!
-                </h1>
-                <h2 className="text-lg">
-                  Try a different quiz type or{" "}
-                  <button
-                    className="font-bold"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      resetToken();
-                    }}
-                  >
-                    reset
-                  </button>{" "}
-                  /{" "}
-                  <button
-                    className="font-bold"
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    disable
-                  </button>{" "}
-                  your token. Resetting your token will result in duplicate
-                  questions
-                </h2>
-              </>
-            )}
-          </div>
-        </div>
+        error && (
+          <ErrorDisplay title={error.message} message={getErrorMessage()} />
+        )
       )}
     </>
   );
