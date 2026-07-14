@@ -4,6 +4,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function Home() {
   const router = useRouter();
@@ -88,22 +89,37 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
-      <CardSlider
-        content={categories}
-        isAnimating={isAnimating}
-        setIsAnimating={setIsAnimating}
-        currentIndex={currentIndex}
-        delayedIndex={delayedIndex}
-        setDelayedIndex={setDelayedIndex}
-      />
+      <motion.div
+        initial={{ translateX: "100vw" }}
+        animate={{ translateX: "0" }}
+        transition={{
+          type: "tween",
+          duration: 0.4,
+          ease: "easeInOut",
+        }}
+        className="w-screen overflow-hidden"
+      >
+        <CardSlider
+          content={categories}
+          isAnimating={isAnimating}
+          setIsAnimating={setIsAnimating}
+          currentIndex={currentIndex}
+          delayedIndex={delayedIndex}
+          setDelayedIndex={setDelayedIndex}
+        />
+      </motion.div>
 
-      <section
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 100 }}
+        transition={{ delay: 0.2 }}
         className="
-          grid grid-cols-3 items-center justify-center w-[80vw] ml-[10vw] *:font-semibold *:text-black
+          grid grid-cols-3 items-center justify-center w-[80vw] mx-auto
           [&>div]:flex [&>div]:items-center [&>div]:justify-center
           [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1
-          [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-white
-          [&>div>select]:hover:scale-110 [&>div>select]:focus:scale-110 [&>div>select]:focus:border-0
+          [&>div>select]:border-3 [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
+          [&>div>select]:focus-within:scale-110 [&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
+          [&_button]:focus:outline-3 **:outline-color3 *:font-semibold *:text-color5
           "
       >
         <div className="gap-4">
@@ -120,9 +136,11 @@ export default function Home() {
           </select>
         </div>
 
-        <div className="gap-12 [&_button]:bg-white [&_button]:duration-100">
+        <div className="gap-12 [&_button]:duration-100">
           <button
-            className="triangle h-6 aspect-square -rotate-90 hover:scale-125 focus:scale-125"
+            className="
+              group relative triangle h-9 aspect-square -rotate-90 bg-transparent hover:scale-125 focus:bg-white
+              "
             onClick={() => {
               if (isAnimating.state) return;
               const direction = "left";
@@ -132,15 +150,29 @@ export default function Home() {
               });
               updateCurrentIndex(direction);
             }}
-          ></button>
+          >
+            <span
+              className="
+              triangle absolute h-7 aspect-square rotate-0
+              top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
+            >
+              <span
+                className="
+                  triangle absolute h-5 aspect-square rotate-0
+                  top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color2"
+              ></span>
+            </span>
+          </button>
           <button
-            className="px-4 py-1.5 rounded-xl hover:scale-110 focus:scale-110"
+            className="px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110"
             onClick={startQuiz}
           >
             START QUIZ
           </button>
           <button
-            className="triangle h-6 aspect-square rotate-90 hover:scale-125 focus:scale-125"
+            className="
+              group relative triangle h-9 aspect-square rotate-90 bg-transparent hover:scale-125 focus:bg-white
+              "
             onClick={() => {
               if (isAnimating.state) return;
               const direction = "right";
@@ -150,7 +182,19 @@ export default function Home() {
               });
               updateCurrentIndex(direction);
             }}
-          ></button>
+          >
+            <span
+              className="
+              triangle absolute h-7 aspect-square rotate-0
+              top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
+            >
+              <span
+                className="
+                  triangle absolute h-5 aspect-square rotate-0
+                  top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color2"
+              ></span>
+            </span>
+          </button>
         </div>
 
         <div className="gap-4">
@@ -163,7 +207,7 @@ export default function Home() {
             <option value="multiple">Multiple Choise</option>
           </select>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 }

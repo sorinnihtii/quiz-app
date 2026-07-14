@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-color1: #0c1713;
-  --color-color2: #5398be;
-  --color-color3: #70566d;
-  --color-color4: #d88373;
-  --color-color5: #f5e2c8;
+  --color-color1: #EF7557;
+  --color-color2: #f9dc5c;
+  --color-color3: #ECF8FD;
+  --color-color4: #829191;
+  --color-color5: #212738;
 }
 
 button {
@@ -16,16 +16,10 @@ button {
   @apply [clip-path:polygon(50%_0%,0%_100%,100%_100%)];
 }
 
-.card {
-  transition: none;
-}
-
-.card.slide-right {
-  transition: transform 500ms;
+.slide-right {
   transform: translateX(-100vw);
 }
 
-.card.slide-left {
-  transition: transform 500ms;
+.slide-left {
   transform: translateX(100vw);
 }

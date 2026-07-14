@@ -1,8 +1,3 @@
-type DisplayContent = {
-    id: number,
-    name: string,
-  };
-
 type QuestionDifficulty = "any" | "easy" | "medium" | "hard";
 
 type QuestionType = "any" | "boolean" | "multiple";
@@ -20,6 +15,12 @@ type Answer = {
   value: string,
   correct: boolean,
 }
+
+type DisplayContent = {
+    id: number,
+    name: string,
+    answers?: Answer[],
+  };
 
 type Animating = {
   state: boolean,

@@ -49,34 +49,36 @@ const CardSlider = ({
 
   const animation = isAnimating.state
     ? isAnimating.direction === "right"
-      ? "slide-right"
-      : "slide-left"
-    : "";
+      ? "transition-all duration-400 slide-right"
+      : "transition-all duration-400 slide-left"
+    : "transiton-none";
+
+  const titleStyles = "text-5xl text-color5 font-semibold";
 
   return (
     <section
       className="
-        flex items-center px-[10vw] gap-[20vw] overflow-x-hidden w-max overflow-hidden translate-x-[-100vw]
-        [&>div]:flex [&>div]:flex-col [&>div]:items-center [&>div]:justify-center [&>div]:h-full [&>div]:w-[80vw] [&>div]:gap-2
-        [&>div]:rounded-2xl [&>div]:bg-[#FFFFFF]
-        [&>div>h1]:w-[50%] [&>div>*]:w-[50%] [&>div>*]:text-center [&>div>h1]:text-5xl"
+        flex items-center h-full w-max px-[10vw] gap-[20vw] overflow-hidden translate-x-[-100vw]"
     >
       {content.length > 0 && (
         <>
           <Card
             title={decode(getTitle(currentIndex))}
             subtitle={getSubtitle(currentIndex)}
+            titleStyles={titleStyles}
             animation={animation}
           />
           <Card
             title={decode(getTitle(delayedIndex))}
             subtitle={getSubtitle(delayedIndex)}
+            titleStyles={titleStyles}
             animation={animation}
             onTransitionEnd={handleTransitionEnd}
           />
           <Card
             title={decode(getTitle(currentIndex))}
             subtitle={getSubtitle(currentIndex)}
+            titleStyles={titleStyles}
             animation={animation}
           />
         </>
