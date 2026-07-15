@@ -33,7 +33,7 @@ const Navbar = () => {
                   e.preventDefault();
                   setIsSettingsVisble(false);
                 }}
-                className="absolute right-1 top-5 -translate-y-1/2 -translate-x-1/2 text-4xl font-black hover:scale-125 focus:scale-125"
+                className="absolute right-1 top-5 -translate-y-1/2 -translate-x-1/2 text-4xl font-black hover:scale-125 focus:outline-3 outline-color5"
               >
                 ×
               </button>
@@ -43,7 +43,7 @@ const Navbar = () => {
               className="
               grid grid-cols-2 divide-x divide-black
               [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
-              [&>div]:mb-auto [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4"
+              [&>div]:mb-auto [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4 [&_input]:outline-color5"
             >
               <div>
                 <label htmlFor="amount">Questions per Quiz</label>
@@ -56,7 +56,7 @@ const Navbar = () => {
                   onChange={(e) => {
                     setAmount(Number(e.target.value));
                   }}
-                  className="w-12 border-2 text-center rounded-md"
+                  className="w-12 border-2 text-center rounded-md focus:outline-2"
                 />
               </div>
               <div>
@@ -68,7 +68,7 @@ const Navbar = () => {
                   onChange={(e) => {
                     setDisableToken(e.target.checked);
                   }}
-                  className="h-3.5 aspect-square"
+                  className="h-5 aspect-square focus:outline-3"
                 />
               </div>
             </section>
@@ -76,7 +76,7 @@ const Navbar = () => {
             <section
               className="
                 flex items-center justify-center gap-8 
-                *:tracking-wide *:px-4 *:py-0.5 *:rounded-sm *:bg-color2 *:text-color5 *:border-3
+                *:tracking-wide *:px-4 *:py-0.5 *:rounded-sm *:bg-color2 *:text-color5 *:font-semibold *:border-3 *:focus:outline-2 *:outline-color5
               "
             >
               <button
@@ -107,7 +107,7 @@ const Navbar = () => {
         className="
           flex items-center justify-center gap-16
           text-sm font-medium underline underline-offset-8 tracking-wider text-color3
-          *:px-4 *:py-0.75 *:hover:scale-120 *:focus:scale-120 *:focus:outline-2 *:outline-color3"
+          *:px-4 *:py-0.75 *:hover:scale-120 *:focus:outline-2 *:outline-color3"
       >
         <Link className={`${pathname === "/" ? "scale-120" : ""}`} href="/">
           Home

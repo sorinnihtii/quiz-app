@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
 import { motion } from "motion/react";
 import Card from "../components/card";
+import getErrorMessage from "../tools/getErrorMessage";
 
 interface Props {
   searchParams: {
@@ -31,10 +32,10 @@ function shuffle(array: Answer[]) {
 
 function QuizClient({ searchParams }: Props) {
   const [isLoading, setIsLoading] = useState(true);
-  const { disableToken } = useSettings();
-
+  const [error, setError] = useState<Error>();
   const [responseCode, setResponseCode] = useState(0);
-  const [error, setError] = useState<any>(undefined);
+
+  const { disableToken } = useSettings();
 
   const [displayContent, setDisplayContent] = useState<DisplayContent[]>([]);
   const [score, setScore] = useState<number>(0);
@@ -46,7 +47,7 @@ function QuizClient({ searchParams }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [delayedIndex, setDelayedIndex] = useState(0); // for animation
 
-  async function getQuestions() {
+  const getQuestions = useCallback(async () => {
     const amountParameter = `?amount=${searchParams.amount}`;
     const categoryParameter = `&category=${searchParams.category}`;
     const difficultyParameter =
@@ -61,16 +62,19 @@ function QuizClient({ searchParams }: Props) {
       const response = await fetch(
         `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
       );
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}${response.statusText}`);
       }
       const data = await response.json();
+      console.log(data);
       if (!data) return;
 
       setResponseCode(data.response_code);
-      if (data.response_code !== 0) return;
+      if (data.response_code !== 0)
+        throw new Error(`ERROR CODE ${data.response_code}`);
 
-      let questionsList: DisplayContent[] = [];
+      const questionsList: DisplayContent[] = [];
 
       data.results.map((question: Question, index: number) => {
         const incorrect = question.incorrect_answers.map((answer) => ({
@@ -105,30 +109,44 @@ function QuizClient({ searchParams }: Props) {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [
+    searchParams.amount,
+    searchParams.category,
+    searchParams.difficulty,
+    searchParams.type,
+    searchParams.token,
+    disableToken,
+  ]);
 
   useEffect(() => {
     getQuestions();
-  }, []);
+  }, [getQuestions]);
+
+  console.log(displayContent);
 
   async function resetToken() {
-    await fetch(
-      `https://opentdb.com/api_token.php?command=reset&token=${searchParams.token}`,
-    );
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://opentdb.com/api_token.php?command=reset&token=${searchParams.token}`,
+      );
+      if (!response.ok)
+        throw new Error(`HTTP ${response.status}${response.statusText}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("err:", err);
+        setError(err);
+      }
+    } finally {
+      setIsLoading(false);
+      window.alert(
+        "Your token was reset successfully. Press 'Try Again' to start a new quiz",
+      );
+    }
   }
 
-  function getErrorMessage() {
-    if (responseCode === 1)
-      return "No Results Could not return results. The API doesn't have enough questions for your query.";
-    if (responseCode === 2)
-      return "Arguements passed in aren't valid. (Ex. Amount = Five)";
-    if (responseCode === 3)
-      return "Your Session Token does not exist. Try resetting or disabling it. Note: this might result in duplicate questions";
-    if (responseCode === 4)
-      return "Your Session Token has returned all possible questions for the specified query. Reset your token or try changing the quiz category, difficulty or questions type.";
-    if (responseCode === 5 || error?.message === "HTTP 429")
-      return "Too many requests. Try again in a few seconds";
-    return "Unknown error";
+  async function fetchNewToken() {
+    
   }
 
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
@@ -194,7 +212,7 @@ function QuizClient({ searchParams }: Props) {
                   }}
                   className={`
                     px-4 py-1.5 rounded-md font-semibold hover:scale-110 border-3 border-color5 focus:outline-3 outline-color3
-                    ${isAnimating.state ? (answer.correct ? "bg-green-500" : "bg-red-500") : "bg-color2"}
+                    ${isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
                     `}
                 >
                   {decode(answer.value)}
@@ -202,11 +220,13 @@ function QuizClient({ searchParams }: Props) {
               ))}
             {currentIndex === displayContent.length && !isAnimating.state && (
               <button
-                className="px-4 py-1.5 rounded-md font-semibold border-3 hover:scale-110 bg-white focus:outline-3 outline-color3"
                 onClick={(e) => {
                   e.preventDefault();
                   startNewQuiz();
                 }}
+                className="
+                  px-4 py-1.5 rounded-md font-semibold bg-color2
+                  hover:scale-110 border-3 border-color5   focus:outline-3 outline-color3"
               >
                 New Quiz
               </button>
@@ -214,16 +234,26 @@ function QuizClient({ searchParams }: Props) {
           </motion.section>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center justify-center h-full p-20 pt-10">
+        <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden px-[10vw]">
           <Card
             title={error.message}
-            subtitle={getErrorMessage()}
+            subtitle={getErrorMessage(responseCode, error?.message)}
             styles="
               flex flex-col items-center justify-center gap-2 bg-white h-[80vh] w-[80vw] rounded-2xl
               *:w-[50%] *:text-center [&>h1]:font-semibold [&>h1]:text-4xl [&>h1]:text-red-500
               [&>h2]:text-black [&>h2]:text-lg
               "
           />
+          <section
+            className="
+            flex w-[80vw] h-full items-center justify-center gap-10
+            *:bg-color2 *:px-4 *:py-1.5 *:border-3 *:border-color5 *:rounded-lg *:font-semibold
+            *:hover:scale-110 *:focus:outline-3 *:outline-color3"
+          >
+            <button onClick={fetchNewToken}>Create New Token</button>
+            <button onClick={() => window.location.reload()}>Try Again</button>
+            <button onClick={resetToken}>Reset Token</button>
+          </section>
         </div>
       ) : (
         isLoading && (
