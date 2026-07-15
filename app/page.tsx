@@ -1,6 +1,6 @@
 "use client";
 
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
@@ -22,40 +22,49 @@ export default function Home() {
   const [error, setError] = useState<Error>();
   const [responseCode, setResponseCode] = useState(0);
 
-  async function getData(
-    url: string,
-    propertyName: string,
-    setState: SetStateAction<any>,
-  ) {
-    const stored = localStorage.getItem(propertyName);
-    if (stored) {
-      setState(JSON.parse(stored));
-      setIsLoading(false);
-    } else {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch");
-        }
-
-        const data = await response.json();
-        if (!data) return;
-
-        setResponseCode(data.response_code);
-        if (data.response_code !== 0) return;
-
-        setState(data[propertyName]);
-        localStorage.setItem(propertyName, JSON.stringify(data[propertyName]));
-      } catch (err) {
-        if (err instanceof Error) {
-          console.log("err:", err);
-          setError(err);
-        }
-      } finally {
+  const getData = useCallback(
+    async (
+      url: string,
+      propertyName: string,
+      setState: SetStateAction<any>,
+    ) => {
+      const stored = localStorage.getItem(propertyName);
+      if (stored) {
+        setState(JSON.parse(stored));
         setIsLoading(false);
+      } else {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Failed to fetch");
+          }
+
+          const data = await response.json();
+          if (!data) return;
+
+          console.log(data.response_code);
+
+          setResponseCode(data.response_code);
+
+          setState(data[propertyName]);
+          console.log(data[propertyName]);
+
+          localStorage.setItem(
+            propertyName,
+            JSON.stringify(data[propertyName]),
+          );
+        } catch (err) {
+          if (err instanceof Error) {
+            console.log("err:", err);
+            setError(err);
+          }
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
-  }
+    },
+    [],
+  );
 
   async function startQuiz() {
     const amountParameter = `?amount=${amount}`;
@@ -108,9 +117,11 @@ export default function Home() {
       });
   }
 
+  console.log(isLoading);
+
   return (
     <>
-      {!error && !isLoading && responseCode === 0 ? (
+      {!error && !isLoading ? (
         <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
           <motion.div
             initial={{ translateX: "100vw" }}
