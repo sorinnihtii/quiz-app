@@ -7,6 +7,7 @@ import { useSettings } from "../store/settings";
 import { motion } from "motion/react";
 import Card from "../components/card";
 import getErrorMessage from "../tools/getErrorMessage";
+import useFetch from "../tools/useFetch";
 
 interface Props {
   searchParams: {
@@ -31,13 +32,54 @@ function shuffle(array: Answer[]) {
 }
 
 function QuizClient({ searchParams }: Props) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error>();
-  const [responseCode, setResponseCode] = useState(0);
-
   const { disableToken } = useSettings();
 
+  const amountParameter = `?amount=${searchParams.amount}`;
+  const categoryParameter = `&category=${searchParams.category}`;
+  const difficultyParameter =
+    searchParams.difficulty != null
+      ? `&difficulty=${searchParams.difficulty}`
+      : "";
+  const typeParameter =
+    searchParams.type != null ? `&type=${searchParams.type}` : "";
+  const tokenParameter = disableToken ? "" : `&token=${searchParams.token}`;
+
+  const { data, isLoading, error, responseCode, refetch } = useFetch(
+    `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
+  );
+
   const [displayContent, setDisplayContent] = useState<DisplayContent[]>([]);
+
+  useEffect(() => {
+    const questionsList: DisplayContent[] = [];
+
+    data.results.map((question: Question, index: number) => {
+      const incorrect = question.incorrect_answers.map((answer) => ({
+        value: answer,
+        correct: false,
+      }));
+      const correct: Answer[] = [
+        {
+          value: question.correct_answer,
+          correct: true,
+        },
+      ];
+      const answers =
+        question.type === "multiple"
+          ? shuffle([...correct, ...incorrect])
+          : correct[0].value === "True"
+            ? [...correct, ...incorrect]
+            : [...incorrect, ...correct];
+
+      questionsList.push({
+        id: index,
+        name: question.question,
+        answers: answers,
+      });
+    });
+    setDisplayContent(questionsList);
+  }, data);
+
   const [score, setScore] = useState<number>(0);
 
   const [isAnimating, setIsAnimating] = useState<Animating>({
@@ -47,85 +89,9 @@ function QuizClient({ searchParams }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [delayedIndex, setDelayedIndex] = useState(0); // for animation
 
-  const getQuestions = useCallback(async () => {
-    const amountParameter = `?amount=${searchParams.amount}`;
-    const categoryParameter = `&category=${searchParams.category}`;
-    const difficultyParameter =
-      searchParams.difficulty != null
-        ? `&difficulty=${searchParams.difficulty}`
-        : "";
-    const typeParameter =
-      searchParams.type != null ? `&type=${searchParams.type}` : "";
-    const tokenParameter = disableToken ? "" : `&token=${searchParams.token}`;
-
-    try {
-      const response = await fetch(
-        `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}${response.statusText}`);
-      }
-      const data = await response.json();
-      console.log(data);
-      if (!data) return;
-
-      setResponseCode(data.response_code);
-      if (data.response_code !== 0)
-        throw new Error(`ERROR CODE ${data.response_code}`);
-
-      const questionsList: DisplayContent[] = [];
-
-      data.results.map((question: Question, index: number) => {
-        const incorrect = question.incorrect_answers.map((answer) => ({
-          value: answer,
-          correct: false,
-        }));
-        const correct: Answer[] = [
-          {
-            value: question.correct_answer,
-            correct: true,
-          },
-        ];
-        const answers =
-          question.type === "multiple"
-            ? shuffle([...correct, ...incorrect])
-            : correct[0].value === "True"
-              ? [...correct, ...incorrect]
-              : [...incorrect, ...correct];
-
-        questionsList.push({
-          id: index,
-          name: question.question,
-          answers: answers,
-        });
-      });
-      setDisplayContent(questionsList);
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("err:", err);
-        setError(err);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    searchParams.amount,
-    searchParams.category,
-    searchParams.difficulty,
-    searchParams.type,
-    searchParams.token,
-    disableToken,
-  ]);
-
-  useEffect(() => {
-    getQuestions();
-  }, [getQuestions]);
-
   console.log(displayContent);
 
   async function resetToken() {
-    setIsLoading(true);
     try {
       const response = await fetch(
         `https://opentdb.com/api_token.php?command=reset&token=${searchParams.token}`,
@@ -134,20 +100,12 @@ function QuizClient({ searchParams }: Props) {
         throw new Error(`HTTP ${response.status}${response.statusText}`);
     } catch (err) {
       if (err instanceof Error) {
-        console.log("err:", err);
-        setError(err);
+        window.alert(`Failed to reset token. ${err.name}:${err.message}`);
       }
-    } finally {
-      setIsLoading(false);
-      window.alert(
-        "Your token was reset successfully. Press 'Try Again' to start a new quiz",
-      );
     }
   }
 
-  async function fetchNewToken() {
-    
-  }
+  async function fetchNewToken() {}
 
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
 
@@ -159,8 +117,7 @@ function QuizClient({ searchParams }: Props) {
   }, [isAnimating.state, startedNewQuiz]);
 
   async function startNewQuiz() {
-    setIsLoading(true);
-    await getQuestions();
+    await refetch();
     setStartedNewQuiz(true);
     setCurrentIndex(0);
     setDelayedIndex(0);

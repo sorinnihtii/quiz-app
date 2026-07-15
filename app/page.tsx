@@ -7,6 +7,7 @@ import { useSettings } from "./store/settings";
 import { motion } from "motion/react";
 import Card from "./components/card";
 import getErrorMessage from "./tools/getErrorMessage";
+import useFetch from "./tools/useFetch";
 
 export default function Home() {
   const router = useRouter();
@@ -14,57 +15,16 @@ export default function Home() {
 
   const [token, setToken] = useState("");
 
-  const [categories, setCategories] = useState<DisplayContent[]>([]);
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
   const [questionType, setQuestionType] = useState<QuestionType>("any");
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error>();
-  const [responseCode, setResponseCode] = useState(0);
-
-  const getData = useCallback(
-    async (
-      url: string,
-      propertyName: string,
-      setState: SetStateAction<any>,
-    ) => {
-      const stored = localStorage.getItem(propertyName);
-      if (stored) {
-        setState(JSON.parse(stored));
-        setIsLoading(false);
-      } else {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error("Failed to fetch");
-          }
-
-          const data = await response.json();
-          if (!data) return;
-
-          console.log(data.response_code);
-
-          setResponseCode(data.response_code);
-
-          setState(data[propertyName]);
-          console.log(data[propertyName]);
-
-          localStorage.setItem(
-            propertyName,
-            JSON.stringify(data[propertyName]),
-          );
-        } catch (err) {
-          if (err instanceof Error) {
-            console.log("err:", err);
-            setError(err);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    },
-    [],
+  const { data, isLoading, error, responseCode } = useFetch(
+    "https://opentdb.com/api_category.php",
+    "trivia_categories",
   );
+  const categories = data?.trivia_categories;
+
+  console.log(data, isLoading, error, responseCode, categories);
 
   async function startQuiz() {
     const amountParameter = `?amount=${amount}`;
@@ -78,23 +38,7 @@ export default function Home() {
       `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
     );
   }
-
-  useEffect(() => {
-    getData(
-      "https://opentdb.com/api_category.php",
-      "trivia_categories",
-      setCategories,
-    );
-
-    if (disableToken) return;
-    getData(
-      "https://opentdb.com/api_token.php?command=request",
-      "token",
-      setToken,
-    );
-  }, [disableToken]);
-
-  const quizCount = categories.length - 1;
+  const quizCount = categories?.length - 1;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [delayedIndex, setDelayedIndex] = useState(0); // for animation purposes
@@ -117,11 +61,9 @@ export default function Home() {
       });
   }
 
-  console.log(isLoading);
-
   return (
     <>
-      {!error && !isLoading ? (
+      {!error && !isLoading && categories ? (
         <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
           <motion.div
             initial={{ translateX: "100vw" }}
