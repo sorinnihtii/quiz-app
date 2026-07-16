@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import Card from "../components/card";
 import getErrorMessage from "../tools/getErrorMessage";
 import useFetch from "../tools/useFetch";
+import resetToken from "../tools/resetToken";
 
 interface Props {
   searchParams: {
@@ -32,7 +33,8 @@ function shuffle(array: Answer[]) {
 }
 
 function QuizClient({ searchParams }: Props) {
-  const { disableToken } = useSettings();
+  const { disableToken, token } = useSettings();
+  console.log("quiz client token", token);
 
   const amountParameter = `?amount=${searchParams.amount}`;
   const categoryParameter = `&category=${searchParams.category}`;
@@ -42,28 +44,28 @@ function QuizClient({ searchParams }: Props) {
       : "";
   const typeParameter =
     searchParams.type != null ? `&type=${searchParams.type}` : "";
-  const tokenParameter = disableToken ? "" : `&token=${searchParams.token}`;
+  const tokenParameter = disableToken ? "" : `&token=${token}`;
 
   const { data, isLoading, error, responseCode, refetch } = useFetch(
     `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
   );
 
-  const [displayContent, setDisplayContent] = useState<DisplayContent[]>([]);
+  const displayContent = useMemo(() => {
+    if (!data) return [];
 
-  useEffect(() => {
-    const questionsList: DisplayContent[] = [];
-
-    data.results.map((question: Question, index: number) => {
+    return data.results.map((question: Question, index: number) => {
       const incorrect = question.incorrect_answers.map((answer) => ({
         value: answer,
         correct: false,
       }));
+
       const correct: Answer[] = [
         {
           value: question.correct_answer,
           correct: true,
         },
       ];
+
       const answers =
         question.type === "multiple"
           ? shuffle([...correct, ...incorrect])
@@ -71,14 +73,13 @@ function QuizClient({ searchParams }: Props) {
             ? [...correct, ...incorrect]
             : [...incorrect, ...correct];
 
-      questionsList.push({
+      return {
         id: index,
         name: question.question,
-        answers: answers,
-      });
+        answers,
+      };
     });
-    setDisplayContent(questionsList);
-  }, data);
+  }, [data]);
 
   const [score, setScore] = useState<number>(0);
 
@@ -89,21 +90,7 @@ function QuizClient({ searchParams }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [delayedIndex, setDelayedIndex] = useState(0); // for animation
 
-  console.log(displayContent);
-
-  async function resetToken() {
-    try {
-      const response = await fetch(
-        `https://opentdb.com/api_token.php?command=reset&token=${searchParams.token}`,
-      );
-      if (!response.ok)
-        throw new Error(`HTTP ${response.status}${response.statusText}`);
-    } catch (err) {
-      if (err instanceof Error) {
-        window.alert(`Failed to reset token. ${err.name}:${err.message}`);
-      }
-    }
-  }
+  console.log("in component", error, responseCode);
 
   async function fetchNewToken() {}
 
@@ -154,8 +141,9 @@ function QuizClient({ searchParams }: Props) {
             className="flex w-[80vw] h-full items-center justify-center ml-[10vw] gap-10"
           >
             {displayContent &&
+              displayContent[delayedIndex] &&
               displayContent[delayedIndex]?.answers &&
-              displayContent[delayedIndex].answers.map((answer) => (
+              displayContent[delayedIndex].answers.map((answer: Answer) => (
                 <button
                   key={answer.value}
                   onClick={() => {
@@ -209,7 +197,7 @@ function QuizClient({ searchParams }: Props) {
           >
             <button onClick={fetchNewToken}>Create New Token</button>
             <button onClick={() => window.location.reload()}>Try Again</button>
-            <button onClick={resetToken}>Reset Token</button>
+            <button onClick={() => resetToken(token)}>Reset Token</button>
           </section>
         </div>
       ) : (

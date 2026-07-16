@@ -11,9 +11,7 @@ import useFetch from "./tools/useFetch";
 
 export default function Home() {
   const router = useRouter();
-  const { amount, disableToken } = useSettings();
-
-  const [token, setToken] = useState("");
+  const { amount } = useSettings();
 
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
   const [questionType, setQuestionType] = useState<QuestionType>("any");
@@ -24,18 +22,15 @@ export default function Home() {
   );
   const categories = data?.trivia_categories;
 
-  console.log(data, isLoading, error, responseCode, categories);
-
   async function startQuiz() {
     const amountParameter = `?amount=${amount}`;
     const categoryParameter = `&category=${categories[currentIndex].id}`;
     const difficultyParameter =
       difficulty != "any" ? `&difficulty=${difficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
-    const tokenParameter = disableToken ? "" : `&token=${token}`;
 
     router.push(
-      `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
+      `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}`,
     );
   }
   const quizCount = categories?.length - 1;

@@ -9,12 +9,14 @@ export default function useFetch(url: string, storage?: string) {
   const [responseCode, setResponseCode] = useState(0);
 
   async function getData() {
+      setIsLoading(true);
+      setError(undefined);
+      setResponseCode(0);
+
       if (storage) {
         const cached = localStorage.getItem(storage);
 
         if (cached) {
-          console.log("cached:", cached, JSON.parse(cached));
-          
           setData(JSON.parse(cached));
           setIsLoading(false);
           return;
@@ -23,18 +25,21 @@ export default function useFetch(url: string, storage?: string) {
 
       try {
         const res = await fetch(url);
+        console.log("usefetch res: ", res)
 
         if (!res.ok) {
-          throw new Error("Loading Error");
+          throw new Error(`HTTP ${res.status}`);
         }
 
         const data = await res.json();
+        console.log("usefetch data: ", data)
 
         if (!data) {
           throw new Error("Failed to fetch data");
         }
 
         setResponseCode(data.response_code);
+        console.log("usefetch response code:", data.response_code)
 
         if (data.response_code && data.response_code !== 0) {
           throw new Error(`Error Code ${data.response_code}`);
@@ -44,6 +49,7 @@ export default function useFetch(url: string, storage?: string) {
         if(storage && data[storage]) localStorage.setItem(storage, JSON.stringify(data));
       } catch (err) {
         if (err instanceof Error) {
+          console.log("usefetch err: ", err)
           setError(err);
         }
       } finally {
