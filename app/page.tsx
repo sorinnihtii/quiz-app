@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <>
       {!error && !isLoading && categories ? (
-        <div className="grid grid-rows-[70%_30%] sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden">
+        <div className="grid grid-rows-2 sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden">
           <motion.div
             initial={{ translateX: "100vw" }}
             animate={{ translateX: "0" }}
@@ -89,7 +89,7 @@ export default function Home() {
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
             className="
-              grid grid-rows-3 sm:grid-cols-3 sm:grid-rows-1 items-center justify-center w-[80vw] mx-auto
+              grid grid-rows-3 sm:grid-cols-3 sm:grid-rows-1 my-auto sm:mt-0 gap-4 items-center justify-center w-[80vw] mx-auto
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
               [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1
               [&>div>select]:border-3 [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2

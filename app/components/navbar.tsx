@@ -148,7 +148,7 @@ const Navbar = () => {
 
             <section
               className="
-                flex items-center justify-center gap-8 
+                flex items-center justify-center gap-8
                 *:tracking-wide *:px-4 *:py-0.5 *:rounded-sm *:bg-color2 *:text-color5 *:font-semibold *:border-3 *:focus:outline-2 *:outline-color5
               "
             >
@@ -179,7 +179,7 @@ const Navbar = () => {
       <nav
         className="
           flex items-center justify-center gap-[5%]
-          text-sm font-medium underline underline-offset-8 tracking-wider text-color3
+          text-xs md:text-sm font-medium underline underline-offset-8 tracking-wider text-color3
           *:px-4 *:py-0.75 *:hover:scale-120 *:focus:outline-2 *:outline-color3"
       >
         <Link className={`${pathname === "/" ? "scale-120" : ""}`} href="/">
