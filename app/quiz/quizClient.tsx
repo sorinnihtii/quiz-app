@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
@@ -9,6 +9,7 @@ import Card from "../components/card";
 import getErrorMessage from "../tools/getErrorMessage";
 import useFetch from "../tools/useFetch";
 import resetToken from "../tools/resetToken";
+import getToken from "../tools/getToken";
 
 interface Props {
   searchParams: {
@@ -33,8 +34,16 @@ function shuffle(array: Answer[]) {
 }
 
 function QuizClient({ searchParams }: Props) {
-  const { disableToken, token } = useSettings();
-  console.log("quiz client token", token);
+  const disableToken = useSettings((s) => s.disableToken);
+  const token = useSettings((s) => s.token);
+  const setToken = useSettings((s) => s.setToken);
+  const initToken = useSettings((s) => s.initToken);
+
+  useEffect(() => {
+    initToken();
+  }, [initToken]);
+
+  console.log("toki", token);
 
   const amountParameter = `?amount=${searchParams.amount}`;
   const categoryParameter = `&category=${searchParams.category}`;
@@ -90,9 +99,12 @@ function QuizClient({ searchParams }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [delayedIndex, setDelayedIndex] = useState(0); // for animation
 
-  console.log("in component", error, responseCode);
-
-  async function fetchNewToken() {}
+  async function getNewToken() {
+    localStorage.removeItem("token");
+    const newToken = await getToken();
+    if (!newToken) return;
+    setToken(newToken);
+  }
 
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
 
@@ -183,11 +195,7 @@ function QuizClient({ searchParams }: Props) {
           <Card
             title={error.message}
             subtitle={getErrorMessage(responseCode, error?.message)}
-            styles="
-              flex flex-col items-center justify-center gap-2 bg-white h-[80vh] w-[80vw] rounded-2xl
-              *:w-[50%] *:text-center [&>h1]:font-semibold [&>h1]:text-4xl [&>h1]:text-red-500
-              [&>h2]:text-black [&>h2]:text-lg
-              "
+            titleStyles="text-red-500"
           />
           <section
             className="
@@ -195,9 +203,15 @@ function QuizClient({ searchParams }: Props) {
             *:bg-color2 *:px-4 *:py-1.5 *:border-3 *:border-color5 *:rounded-lg *:font-semibold
             *:hover:scale-110 *:focus:outline-3 *:outline-color3"
           >
-            <button onClick={fetchNewToken}>Create New Token</button>
             <button onClick={() => window.location.reload()}>Try Again</button>
-            <button onClick={() => resetToken(token)}>Reset Token</button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                resetToken(token);
+              }}
+            >
+              Reset Token
+            </button>
           </section>
         </div>
       ) : (

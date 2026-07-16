@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-color1: #EF7557;
+  --color-color1: #ef7557;
   --color-color2: #f9dc5c;
-  --color-color3: #ECF8FD;
+  --color-color3: #ecf8fd;
   --color-color4: #829191;
   --color-color5: #212738;
 }
@@ -22,4 +22,16 @@ button {
 
 .slide-left {
   transform: translateX(100vw);
+}
+
+@keyframes hovering {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5%);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }

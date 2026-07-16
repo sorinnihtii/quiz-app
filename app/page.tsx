@@ -1,6 +1,6 @@
 "use client";
 
-import { SetStateAction, useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
@@ -11,13 +11,12 @@ import useFetch from "./tools/useFetch";
 
 export default function Home() {
   const router = useRouter();
-  const {
-    amount,
-    questionDifficulty,
-    setQuestionDifficulty,
-    questionType,
-    setQuestionType,
-  } = useSettings();
+
+  const amount = useSettings((s) => s.amount);
+  const questionDifficulty = useSettings((s) => s.questionDifficulty);
+  const setQuestionDifficulty = useSettings((s) => s.setQuestionDifficulty);
+  const questionType = useSettings((s) => s.questionType);
+  const setQuestionType = useSettings((s) => s.setQuestionType);
 
   const { data, isLoading, error, responseCode } = useFetch(
     "https://opentdb.com/api_category.php",
@@ -58,6 +57,8 @@ export default function Home() {
         else return prev - 1;
       });
   }
+
+  console.log(isLoading, error);
 
   return (
     <>
@@ -187,11 +188,7 @@ export default function Home() {
           <Card
             title={error.message}
             subtitle={getErrorMessage(responseCode, error?.message)}
-            styles="
-              flex flex-col items-center justify-center gap-2 bg-white h-[80vh] w-[80vw] rounded-2xl
-              *:w-[50%] *:text-center [&>h1]:font-semibold [&>h1]:text-4xl [&>h1]:text-red-500
-              [&>h2]:text-black [&>h2]:text-lg
-              "
+            subtitleStyles="text-red-500"
           />
         </div>
       ) : (

@@ -1,5 +1,3 @@
-import { useSettings } from "../store/settings";
-
 export default async function resetToken(token:string) {
     try {
       const res = await fetch(

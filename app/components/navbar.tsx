@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSettings } from "../store/settings";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import resetToken from "../tools/resetToken";
-import getNewToken from "../tools/getNewToken";
+import getToken from "../tools/getToken";
+import { FiAlertCircle } from "react-icons/fi";
+import { RxCross2 } from "react-icons/rx";
 
 function copyToClipboard(text: string) {
   navigator.clipboard
@@ -17,10 +19,28 @@ function copyToClipboard(text: string) {
 
 const Navbar = () => {
   const [isSettingsVisible, setIsSettingsVisble] = useState(false);
-  const { amount, setAmount, disableToken, setDisableToken, token } =
-    useSettings();
+
+  const amount = useSettings((s) => s.amount);
+  const setAmount = useSettings((s) => s.setAmount);
+  const disableToken = useSettings((s) => s.disableToken);
+  const setDisableToken = useSettings((s) => s.setDisableToken);
+  const token = useSettings((s) => s.token);
+  const setToken = useSettings((s) => s.setToken);
+  const initToken = useSettings((s) => s.initToken);
+
+  useEffect(() => {
+    initToken();
+  }, [initToken]);
 
   const pathname = usePathname();
+
+  async function getNewToken() {
+    localStorage.removeItem("token");
+    const newToken = await getToken();
+    if (!newToken) return;
+    window.alert("You succesffully received a new token");
+    setToken(newToken);
+  }
 
   return (
     <>
@@ -33,19 +53,19 @@ const Navbar = () => {
             transition={{ duration: 0.1 }}
             className="
               fixed grid grid-rows-[25%_60%_15%] text-center w-[50vw] h-[50vh]
-              left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-black rounded-xl bg-color3
+              left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
               "
           >
             <section className="relative flex items-center justify-center">
-              <h1 className="text-lg font-bold">Settings</h1>
+              <h1 className="text-xl font-bold">SETTINGS</h1>
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   setIsSettingsVisble(false);
                 }}
-                className="absolute right-1 top-5 -translate-y-1/2 -translate-x-1/2 text-4xl font-black hover:scale-125 focus:outline-3 outline-color5"
+                className="absolute right-0 top-7 -translate-y-1/2 -translate-x-1/2 text-3xl hover:scale-125 focus:outline-3 outline-color5"
               >
-                ×
+                <RxCross2 />
               </button>
             </section>
 
@@ -81,6 +101,22 @@ const Navbar = () => {
                 >
                   new
                 </button>
+                <div className="group relative">
+                  <FiAlertCircle className="text-amber-500" />
+                  <span
+                    className="
+                      absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[140%] group-hover:bottom-[150%] rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
+                      transition-all duration-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible"
+                  >
+                    Avoid creating new tokens unless necessary. In most cases
+                    resetting your current token is enough
+                  </span>
+                  <span
+                    className="
+                      absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full group-hover:bottom-[110%] bg-amber-500
+                      transition-all duration-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible"
+                  ></span>
+                </div>
               </div>
               <div>
                 <label htmlFor="disableToken">Disable Token</label>
@@ -91,7 +127,7 @@ const Navbar = () => {
                   onChange={(e) => {
                     setDisableToken(e.target.checked);
                   }}
-                  className="h-5 aspect-square focus:outline-3"
+                  className="h-4 aspect-square focus:outline-3"
                 />
               </div>
               <div>

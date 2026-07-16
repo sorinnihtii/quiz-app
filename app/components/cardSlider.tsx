@@ -53,7 +53,7 @@ const CardSlider = ({
       : "transition-all duration-400 slide-left"
     : "transiton-none";
 
-  const titleStyles = "text-5xl text-color5 font-semibold";
+  const titleStyles = "text-color5";
 
   return (
     <section
