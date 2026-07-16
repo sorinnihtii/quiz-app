@@ -3,31 +3,66 @@ import getToken from "../tools/getToken";
 
 type AppSettings = {
     amount: number;
-    setAmount: (newAmount: number) => void;
+    setAmount: (newValue: number) => void;
+    questionDifficulty: QuestionDifficulty;
+    setQuestionDifficulty: (newValue: QuestionDifficulty) => void;
+    questionType: QuestionType;
+    setQuestionType: (newValue: QuestionType) => void;
     disableToken: boolean;
     setDisableToken: (newValue: boolean) => void
     token: any
 }
 
+const storageAvailable: boolean = typeof window !== "undefined";
+
 const amount =
-  typeof window !== "undefined"
+  storageAvailable
     ? Number(localStorage.getItem("amount")) || 10
     : 10;
 
+const questionDifficulty =
+  storageAvailable
+    ? localStorage.getItem("questionDifficulty") as QuestionDifficulty 
+        ? localStorage.getItem("questionDifficulty") as QuestionDifficulty
+        : "any"
+    : "any";
+
+const questionType =
+  storageAvailable
+    ? localStorage.getItem("questionType") as QuestionType
+        ? localStorage.getItem("questionType") as QuestionType
+        : "any"
+    : "any";
+
 const disableToken =
-  typeof window !== "undefined"
+  storageAvailable
     ? localStorage.getItem("disableToken") === "true"
     : false;
 
-const token = disableToken ? "" : typeof window !== "undefined"
-    ? localStorage.getItem("token") ? localStorage.getItem("token") : await getToken() : await getToken();
+const token = 
+    disableToken ? "" : 
+        storageAvailable
+            ? localStorage.getItem("token") 
+                ? localStorage.getItem("token") 
+                : await getToken() 
+            : await getToken();
 
 export const useSettings = create<AppSettings>((set) => ({
     amount: amount,
-    setAmount: (newAmount) =>
-        set({ amount: newAmount }),
+    setAmount: (newValue) =>
+        set({ amount: newValue }),
+
+    questionDifficulty: questionDifficulty,
+    setQuestionDifficulty: (newValue) =>
+        set({ questionDifficulty: newValue}),
+
+    questionType: questionType,
+    setQuestionType: (newValue) =>
+        set({ questionType: newValue }),
+
     disableToken: disableToken,
     setDisableToken: (newValue) =>
         set({ disableToken: newValue}),
+
     token: token,
 }))

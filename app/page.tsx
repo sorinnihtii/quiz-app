@@ -11,10 +11,13 @@ import useFetch from "./tools/useFetch";
 
 export default function Home() {
   const router = useRouter();
-  const { amount } = useSettings();
-
-  const [difficulty, setDifficulty] = useState<QuestionDifficulty>("any");
-  const [questionType, setQuestionType] = useState<QuestionType>("any");
+  const {
+    amount,
+    questionDifficulty,
+    setQuestionDifficulty,
+    questionType,
+    setQuestionType,
+  } = useSettings();
 
   const { data, isLoading, error, responseCode } = useFetch(
     "https://opentdb.com/api_category.php",
@@ -26,7 +29,7 @@ export default function Home() {
     const amountParameter = `?amount=${amount}`;
     const categoryParameter = `&category=${categories[currentIndex].id}`;
     const difficultyParameter =
-      difficulty != "any" ? `&difficulty=${difficulty}` : "";
+      questionDifficulty != "any" ? `&difficulty=${questionDifficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
 
     router.push(
@@ -94,10 +97,11 @@ export default function Home() {
           >
             <div className="gap-4">
               <select
-                value={difficulty}
-                onChange={(e) =>
-                  setDifficulty(e.target.value as QuestionDifficulty)
-                }
+                value={questionDifficulty}
+                onChange={(e) => {
+                  setQuestionDifficulty(e.target.value as QuestionDifficulty);
+                  localStorage.setItem("questionDifficulty", e.target.value);
+                }}
               >
                 <option value="any">Any Difficulty</option>
                 <option value="easy">Easy</option>
@@ -166,9 +170,10 @@ export default function Home() {
             <div className="gap-4">
               <select
                 value={questionType}
-                onChange={(e) =>
-                  setQuestionType(e.target.value as QuestionType)
-                }
+                onChange={(e) => {
+                  setQuestionType(e.target.value as QuestionType);
+                  localStorage.setItem("questionType", e.target.value);
+                }}
               >
                 <option value="any">Any Type</option>
                 <option value="boolean">True / False</option>
