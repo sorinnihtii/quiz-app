@@ -21,10 +21,8 @@ export default function useFetch(url: string, storage?: string) {
           setData(JSON.parse(cached));
           setIsLoading(false);
           return;
-        } else {
-          localStorage.removeItem(storage);
-          return;
         }
+        localStorage.removeItem(storage);
       } catch {
         localStorage.removeItem(storage);
       }

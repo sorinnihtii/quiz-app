@@ -178,7 +178,7 @@ const Navbar = () => {
 
       <nav
         className="
-          flex items-center justify-center gap-16
+          flex items-center justify-center gap-[5%]
           text-sm font-medium underline underline-offset-8 tracking-wider text-color3
           *:px-4 *:py-0.75 *:hover:scale-120 *:focus:outline-2 *:outline-color3"
       >

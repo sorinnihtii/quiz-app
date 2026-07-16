@@ -58,12 +58,12 @@ export default function Home() {
       });
   }
 
-  console.log(isLoading, error);
+  console.log(categories, isLoading, error, responseCode);
 
   return (
     <>
       {!error && !isLoading && categories ? (
-        <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
+        <div className="grid grid-rows-[70%_30%] sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden">
           <motion.div
             initial={{ translateX: "100vw" }}
             animate={{ translateX: "0" }}
@@ -89,7 +89,7 @@ export default function Home() {
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
             className="
-              grid grid-cols-3 items-center justify-center w-[80vw] mx-auto
+              grid grid-rows-3 sm:grid-cols-3 sm:grid-rows-1 items-center justify-center w-[80vw] mx-auto
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
               [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1
               [&>div>select]:border-3 [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
@@ -111,7 +111,7 @@ export default function Home() {
               </select>
             </div>
 
-            <div className="gap-10 [&_button]:duration-100">
+            <div className="gap-[10%] [&_button]:duration-100">
               <button
                 className="group relative triangle h-9 aspect-square -rotate-90 bg-transparent hover:scale-125 focus:bg-white"
                 onClick={() => {
@@ -137,7 +137,7 @@ export default function Home() {
                 </span>
               </button>
               <button
-                className="px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110"
+                className="text-xs px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
                 onClick={startQuiz}
               >
                 START QUIZ
