@@ -22,7 +22,7 @@ const Card = ({
   return (
     <div
       className={`
-        flex flex-col items-center justify-center h-full w-[80vw] gap-2
+        flex flex-col items-center justify-center h-full w-[80dvw] gap-2
         rounded-2xl text-center bg-color3 *:w-[50%] border-4 border-color5
         ${styles} ${animation}
         `}

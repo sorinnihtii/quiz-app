@@ -13,7 +13,7 @@ import { RxCross2 } from "react-icons/rx";
 function copyToClipboard(text: string) {
   navigator.clipboard
     .writeText(text)
-    .then(() => alert("Text copied to clipboard!"))
+    .then(() => alert("text copied to clipboard succesfully"))
     .catch((err) => console.error("Failed to copy text: ", err));
 }
 
@@ -52,18 +52,22 @@ const Navbar = () => {
             exit={{ scale: 0 }}
             transition={{ duration: 0.1 }}
             className="
-              fixed grid grid-rows-[25%_60%_15%] text-center w-[50vw] h-[50vh]
+              fixed grid grid-rows-[auto_auto_auto] text-center w-[70dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
               left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
+              text-xs sm:text-sm xl:text-base
+              [&>section]:flex [&>section]:items-center [&>section]:py-5 [&>section]:gap-5
               "
           >
-            <section className="relative flex items-center justify-center">
-              <h1 className="text-xl font-bold">SETTINGS</h1>
+            <section className="relative justify-center">
+              <h1 className="text-md md:text-lg lg:text-xl font-bold">
+                SETTINGS
+              </h1>
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   setIsSettingsVisble(false);
                 }}
-                className="absolute right-0 top-7 -translate-y-1/2 -translate-x-1/2 text-3xl hover:scale-125 focus:outline-3 outline-color5"
+                className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl hover:scale-125 focus:outline-3 outline-color5"
               >
                 <RxCross2 />
               </button>
@@ -71,51 +75,53 @@ const Navbar = () => {
 
             <section
               className="
-              grid grid-cols-2 gap-y-8 mb-auto divide-x divide-black
+              flex-col justify-start gap-5
               [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
               [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4 [&_input]:outline-color5"
             >
-              <div className="[&>button]:underline [&>button]:font-semibold">
+              <div>
                 <label htmlFor="token">User Token</label>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    copyToClipboard(token);
-                  }}
-                >
-                  copy
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    resetToken(token);
-                  }}
-                >
-                  reset
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    getNewToken();
-                  }}
-                >
-                  new
-                </button>
-                <div className="group relative">
-                  <FiAlertCircle className="text-amber-500" />
-                  <span
-                    className="
+                <div className="flex items-center gap-3 [&>button]:underline [&>button]:font-semibold">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      copyToClipboard(token);
+                    }}
+                  >
+                    copy
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      resetToken(token);
+                    }}
+                  >
+                    reset
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      getNewToken();
+                    }}
+                  >
+                    new
+                  </button>
+                  <div className="group relative">
+                    <FiAlertCircle className="text-amber-500" />
+                    <span
+                      className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[140%] group-hover:bottom-[150%] rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
                       transition-all duration-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible"
-                  >
-                    Avoid creating new tokens unless necessary. In most cases
-                    resetting your current token is enough
-                  </span>
-                  <span
-                    className="
+                    >
+                      Avoid creating new tokens unless necessary. In most cases
+                      resetting your current token is enough
+                    </span>
+                    <span
+                      className="
                       absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full group-hover:bottom-[110%] bg-amber-500
                       transition-all duration-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible"
-                  ></span>
+                    ></span>
+                  </div>
                 </div>
               </div>
               <div>
@@ -148,8 +154,8 @@ const Navbar = () => {
 
             <section
               className="
-                flex items-center justify-center gap-8
-                *:tracking-wide *:px-4 *:py-0.5 *:rounded-sm *:bg-color2 *:text-color5 *:font-semibold *:border-3 *:focus:outline-2 *:outline-color5
+                justify-center gap-5
+                *:tracking-wide *:px-4 *:py-px *:rounded-sm *:bg-color2 *:text-color5 *:font-semibold *:border-2 *:focus:outline-2 *:outline-color5
               "
             >
               <button

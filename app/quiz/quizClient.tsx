@@ -125,9 +125,9 @@ function QuizClient({ searchParams }: Props) {
   return (
     <>
       {!error && !isLoading && responseCode === 0 ? (
-        <div className="grid grid-rows-2 sm:grid-rows-[80%_20%] w-screen h-full overflow-x-hidden">
+        <div className="grid grid-rows-[60%_40%] sm:grid-rows-[80%_20%] w-screen h-full overflow-x-hidden">
           <motion.div
-            initial={{ translateX: "100vw" }}
+            initial={{ translateX: "100dvw" }}
             animate={{ translateX: "0" }}
             transition={{
               type: "tween",
@@ -150,7 +150,7 @@ function QuizClient({ searchParams }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-[5%] sm:flex-row w-[80vw] h-full items-center justify-center ml-[10vw]"
+            className="flex flex-col gap-[5%] sm:flex-row w-[80dvw] h-full items-center justify-center ml-[10dvw]"
           >
             {displayContent &&
               displayContent[delayedIndex] &&
@@ -191,7 +191,7 @@ function QuizClient({ searchParams }: Props) {
           </motion.section>
         </div>
       ) : error ? (
-        <div className="grid grid-rows-2 sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden px-[10vw]">
+        <div className="grid grid-rows-2 sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden px-[10dvw]">
           <Card
             title={error.message}
             subtitle={getErrorMessage(responseCode, error?.message)}
@@ -199,7 +199,7 @@ function QuizClient({ searchParams }: Props) {
           />
           <section
             className="
-            flex w-[80vw] h-full items-center justify-center gap-10
+            flex w-[80dvw] h-full items-center justify-center gap-10
             *:bg-color2 *:px-4 *:py-1.5 *:border-3 *:border-color5 *:rounded-lg *:font-semibold
             *:hover:scale-110 *:focus:outline-3 *:outline-color3"
           >

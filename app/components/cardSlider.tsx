@@ -58,7 +58,7 @@ const CardSlider = ({
   return (
     <section
       className="
-        flex items-center h-full w-max px-[10vw] gap-[20vw] overflow-hidden translate-x-[-100vw]"
+        flex items-center h-full w-max px-[10dvw] gap-[20dvw] overflow-hidden translate-x-[-100dvw]"
     >
       {content.length > 0 && (
         <>
