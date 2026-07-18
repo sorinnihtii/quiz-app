@@ -5,11 +5,10 @@ import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
 import { motion } from "motion/react";
-import Card from "../components/card";
-import getErrorMessage from "../tools/getErrorMessage";
 import useFetch from "../tools/useFetch";
-import resetToken from "../tools/resetToken";
 import getToken from "../tools/getToken";
+import useCardSlider from "../tools/useCardSliderStates";
+import ErrorDisplay from "../components/errorDispaly";
 
 interface Props {
   searchParams: {
@@ -36,14 +35,13 @@ function shuffle(array: Answer[]) {
 function QuizClient({ searchParams }: Props) {
   const disableToken = useSettings((s) => s.disableToken);
   const token = useSettings((s) => s.token);
-  const setToken = useSettings((s) => s.setToken);
   const initToken = useSettings((s) => s.initToken);
+
+  const slider = useCardSlider();
 
   useEffect(() => {
     initToken();
   }, [initToken]);
-
-  console.log("toki", token);
 
   const amountParameter = `?amount=${searchParams.amount}`;
   const categoryParameter = `&category=${searchParams.category}`;
@@ -62,7 +60,7 @@ function QuizClient({ searchParams }: Props) {
   const displayContent = useMemo(() => {
     if (!data) return [];
 
-    return data.results.map((question: Question, index: number) => {
+    return data.results.map((question: Question) => {
       const incorrect = question.incorrect_answers.map((answer) => ({
         value: answer,
         correct: false,
@@ -83,7 +81,6 @@ function QuizClient({ searchParams }: Props) {
             : [...incorrect, ...correct];
 
       return {
-        id: index,
         name: question.question,
         answers,
       };
@@ -91,129 +88,84 @@ function QuizClient({ searchParams }: Props) {
   }, [data]);
 
   const [score, setScore] = useState<number>(0);
-
-  const [isAnimating, setIsAnimating] = useState<Animating>({
-    state: false,
-    direction: "left",
-  });
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [delayedIndex, setDelayedIndex] = useState(0); // for animation
-
-  async function getNewToken() {
-    localStorage.removeItem("token");
-    const newToken = await getToken();
-    if (!newToken) return;
-    setToken(newToken);
-  }
-
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
 
   useEffect(() => {
-    if (!isAnimating.state && startedNewQuiz) {
+    if (!slider.isAnimating.state && startedNewQuiz) {
       setScore(0);
       setStartedNewQuiz(false);
     }
-  }, [isAnimating.state, startedNewQuiz]);
+  }, [slider.isAnimating.state, startedNewQuiz]);
 
   async function startNewQuiz() {
     await refetch();
     setStartedNewQuiz(true);
-    setCurrentIndex(0);
-    setDelayedIndex(0);
+    slider.setCurrentIndex(0);
+    slider.setDelayedIndex(0);
   }
 
   return (
     <>
       {!error && !isLoading && responseCode === 0 ? (
-        <div className="grid grid-rows-[60%_40%] sm:grid-rows-[80%_20%] w-screen h-full overflow-x-hidden">
-          <motion.div
-            initial={{ translateX: "100dvw" }}
-            animate={{ translateX: "0" }}
-            transition={{
-              type: "tween",
-              duration: 0.4,
-              ease: "easeInOut",
-            }}
-            className="w-screen overflow-hidden"
-          >
-            <CardSlider
-              content={displayContent}
-              isAnimating={isAnimating}
-              setIsAnimating={setIsAnimating}
-              currentIndex={currentIndex}
-              delayedIndex={delayedIndex}
-              setDelayedIndex={setDelayedIndex}
-              score={score}
-            />
-          </motion.div>
+        <div className="grid grid-rows-[60%_40%] md:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
+          <CardSlider
+            content={displayContent}
+            isAnimating={slider.isAnimating}
+            setIsAnimating={slider.setIsAnimating}
+            currentIndex={slider.currentIndex}
+            delayedIndex={slider.delayedIndex}
+            setDelayedIndex={slider.setDelayedIndex}
+            score={score}
+          />
           <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-[5%] sm:flex-row w-[80dvw] h-full items-center justify-center ml-[10dvw]"
+            className="flex flex-col gap-[5%] mx-[10dvw] sm:flex-row w-[80dvw] h-full items-center justify-center"
           >
             {displayContent &&
-              displayContent[delayedIndex] &&
-              displayContent[delayedIndex]?.answers &&
-              displayContent[delayedIndex].answers.map((answer: Answer) => (
-                <button
-                  key={answer.value}
-                  onClick={() => {
-                    if (isAnimating.state) return;
-                    setCurrentIndex((prev) => prev + 1);
-                    setIsAnimating({
-                      state: true,
-                      direction: "right",
-                    });
-                    if (answer.correct) setScore((prev) => prev + 1);
-                  }}
-                  className={`
+              displayContent[slider.delayedIndex] &&
+              displayContent[slider.delayedIndex]?.answers &&
+              displayContent[slider.delayedIndex].answers.map(
+                (answer: Answer) => (
+                  <button
+                    key={answer.value}
+                    onClick={() => {
+                      if (slider.isAnimating.state) return;
+                      slider.setCurrentIndex((prev) => prev + 1);
+                      slider.setIsAnimating({
+                        state: true,
+                        direction: "right",
+                      });
+                      if (answer.correct) setScore((prev) => prev + 1);
+                    }}
+                    className={`
                     px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold hover:scale-110 border-3 border-color5 focus:outline-3 outline-color3
-                    ${isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
+                    ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
                     `}
-                >
-                  {decode(answer.value)}
-                </button>
-              ))}
-            {currentIndex === displayContent.length && !isAnimating.state && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  startNewQuiz();
-                }}
-                className="
-                  px-4 py-1.5 rounded-md font-semibold bg-color2
+                  >
+                    {decode(answer.value)}
+                  </button>
+                ),
+              )}
+            {slider.currentIndex === displayContent.length &&
+              !slider.isAnimating.state && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    startNewQuiz();
+                  }}
+                  className="
+                  px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2
                   hover:scale-110 border-3 border-color5   focus:outline-3 outline-color3"
-              >
-                New Quiz
-              </button>
-            )}
+                >
+                  New Quiz
+                </button>
+              )}
           </motion.section>
         </div>
       ) : error ? (
-        <div className="grid grid-rows-2 sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden px-[10dvw]">
-          <Card
-            title={error.message}
-            subtitle={getErrorMessage(responseCode, error?.message)}
-            titleStyles="text-red-500"
-          />
-          <section
-            className="
-            flex w-[80dvw] h-full items-center justify-center gap-10
-            *:bg-color2 *:px-4 *:py-1.5 *:border-3 *:border-color5 *:rounded-lg *:font-semibold
-            *:hover:scale-110 *:focus:outline-3 *:outline-color3"
-          >
-            <button onClick={() => window.location.reload()}>Try Again</button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                resetToken(token);
-              }}
-            >
-              Reset Token
-            </button>
-          </section>
-        </div>
+        <ErrorDisplay responseCode={responseCode} error={error} />
       ) : (
         isLoading && (
           <div className="flex items-center justify-center h-full text-white text-xl">

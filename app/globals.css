@@ -8,7 +8,8 @@
   --color-color5: #212738;
 }
 
-button {
+button,
+select {
   @apply cursor-pointer;
 }
 

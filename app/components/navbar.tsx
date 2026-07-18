@@ -52,7 +52,7 @@ const Navbar = () => {
             exit={{ scale: 0 }}
             transition={{ duration: 0.1 }}
             className="
-              fixed grid grid-rows-[auto_auto_auto] text-center w-[70dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
+              fixed grid grid-rows-[auto_auto_auto] text-center w-[85dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
               left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
               text-xs sm:text-sm xl:text-base
               [&>section]:flex [&>section]:items-center [&>section]:py-5 [&>section]:gap-5

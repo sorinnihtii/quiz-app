@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
 import { useSettings } from "./store/settings";
 import { motion } from "motion/react";
-import Card from "./components/card";
-import getErrorMessage from "./tools/getErrorMessage";
 import useFetch from "./tools/useFetch";
+import useCardSlider from "./tools/useCardSliderStates";
+import ErrorDisplay from "./components/errorDispaly";
 
 export default function Home() {
   const router = useRouter();
@@ -23,10 +22,11 @@ export default function Home() {
     "trivia_categories",
   );
   const categories = data?.trivia_categories;
+  console.log(categories);
 
   async function startQuiz() {
     const amountParameter = `?amount=${amount}`;
-    const categoryParameter = `&category=${categories[currentIndex].id}`;
+    const categoryParameter = `&category=${categories[slider.currentIndex].id}`;
     const difficultyParameter =
       questionDifficulty != "any" ? `&difficulty=${questionDifficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
@@ -37,62 +37,43 @@ export default function Home() {
   }
   const quizCount = categories?.length - 1;
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [delayedIndex, setDelayedIndex] = useState(0); // for animation purposes
-
-  const [isAnimating, setIsAnimating] = useState<Animating>({
-    state: false,
-    direction: "left",
-  });
+  const slider = useCardSlider();
 
   function updateCurrentIndex(direction: string) {
     if (direction === "right")
-      setCurrentIndex((prev) => {
+      slider.setCurrentIndex((prev: number) => {
         if (prev === quizCount) return 0;
         else return prev + 1;
       });
     else
-      setCurrentIndex((prev) => {
+      slider.setCurrentIndex((prev: number) => {
         if (prev === 0) return quizCount;
         else return prev - 1;
       });
   }
 
-  console.log(currentIndex, delayedIndex);
-
   return (
     <>
       {!error && !isLoading && categories ? (
-        <div className="grid grid-rows-[60%_40%] sm:grid-rows-[80%_20%] w-screen h-full overflow-hidden">
-          <motion.div
-            initial={{ translateX: "100dvw" }}
-            animate={{ translateX: "0" }}
-            transition={{
-              type: "tween",
-              duration: 0.4,
-              ease: "easeInOut",
-            }}
-            className="w-screen overflow-hidden"
-          >
-            <CardSlider
-              content={categories}
-              isAnimating={isAnimating}
-              setIsAnimating={setIsAnimating}
-              currentIndex={currentIndex}
-              delayedIndex={delayedIndex}
-              setDelayedIndex={setDelayedIndex}
-            />
-          </motion.div>
+        <div className="grid grid-rows-[60%_40%] md:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
+          <CardSlider
+            content={categories}
+            isAnimating={slider.isAnimating}
+            setIsAnimating={slider.setIsAnimating}
+            currentIndex={slider.currentIndex}
+            delayedIndex={slider.delayedIndex}
+            setDelayedIndex={slider.setDelayedIndex}
+          />
 
           <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
             className="
-              grid grid-rows-3 sm:grid-cols-3 sm:grid-rows-1 my-auto gap-4 items-center justify-center w-[80dvw] mx-auto
+              grid grid-rows-3 md:grid-cols-3 sm:grid-rows-1 w-[80dvw] mx-[10dvw] my-auto gap-4
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
-              [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1
-              [&>div>select]:border-3 [&>div>select]:cursor-pointer [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
+              [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
+              [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
               [&>div>select]:focus-within:scale-110 [&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
               [&_button]:focus:outline-3 **:outline-color3 **:font-semibold **:text-color5"
           >
@@ -111,13 +92,13 @@ export default function Home() {
               </select>
             </div>
 
-            <div className="gap-[10%] [&_button]:duration-100">
+            <div className="gap-10 [&_button]:duration-100">
               <button
                 className="group relative triangle h-9 aspect-square -rotate-90 bg-transparent hover:scale-125 focus:bg-white"
                 onClick={() => {
-                  if (isAnimating.state) return;
+                  if (slider.isAnimating.state) return;
                   const direction = "left";
-                  setIsAnimating({
+                  slider.setIsAnimating({
                     state: true,
                     direction: direction,
                   });
@@ -137,7 +118,7 @@ export default function Home() {
                 </span>
               </button>
               <button
-                className="text-xs px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
+                className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
                 onClick={startQuiz}
               >
                 START QUIZ
@@ -145,9 +126,9 @@ export default function Home() {
               <button
                 className="group relative triangle h-9 aspect-square rotate-90 bg-transparent hover:scale-125 focus:bg-white"
                 onClick={() => {
-                  if (isAnimating.state) return;
+                  if (slider.isAnimating.state) return;
                   const direction = "right";
-                  setIsAnimating({
+                  slider.setIsAnimating({
                     state: true,
                     direction: direction,
                   });
@@ -184,13 +165,7 @@ export default function Home() {
           </motion.section>
         </div>
       ) : error ? (
-        <div className="grid grid-rows-[80%_20%] w-screen h-full overflow-hidden">
-          <Card
-            title={error.message}
-            subtitle={getErrorMessage(responseCode, error?.message)}
-            subtitleStyles="text-red-500"
-          />
-        </div>
+        <ErrorDisplay responseCode={responseCode} error={error} />
       ) : (
         isLoading && (
           <div className="flex items-center justify-center h-full text-white text-xl">
