@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useSettings } from "../store/settings";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
-import resetToken from "../tools/resetToken";
 import getToken from "../tools/getToken";
 import { FiAlertCircle } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -20,26 +19,50 @@ function copyToClipboard(text: string) {
 const Navbar = () => {
   const [isSettingsVisible, setIsSettingsVisble] = useState(false);
 
-  const amount = useSettings((s) => s.amount);
-  const setAmount = useSettings((s) => s.setAmount);
-  const disableToken = useSettings((s) => s.disableToken);
-  const setDisableToken = useSettings((s) => s.setDisableToken);
-  const token = useSettings((s) => s.token);
-  const setToken = useSettings((s) => s.setToken);
-  const initToken = useSettings((s) => s.initToken);
+  const questionAmount = useSettings((s) => s.questionAmount);
+  const setQuestionAmount = useSettings((s) => s.setQuestionAmount);
+  const disableSessionToken = useSettings((s) => s.disableSessionToken);
+  const setDisableSessionToken = useSettings((s) => s.setDisableSessionToken);
+  const sessionToken = useSettings((s) => s.sessionToken);
+  const setSessionToken = useSettings((s) => s.setSessionToken);
+  const initSessionToken = useSettings((s) => s.initSessionToken);
+
+  const [localSettingsValues, setLocalSettingsValues] = useState({
+    questionAmount: questionAmount,
+    disableToken: disableSessionToken,
+  });
 
   useEffect(() => {
-    initToken();
-  }, [initToken]);
+    initSessionToken();
+  }, [initSessionToken]);
 
   const pathname = usePathname();
 
   async function getNewToken() {
-    localStorage.removeItem("token");
-    const newToken = await getToken();
-    if (!newToken) return;
-    window.alert("You succesffully received a new token");
-    setToken(newToken);
+    try {
+      localStorage.removeItem("sessionToken");
+      const newToken = await getToken();
+      if (!newToken) return;
+      window.alert("You succesffully received a new token");
+      setSessionToken(newToken);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function resetToken(token: string) {
+    try {
+      const res = await fetch(
+        `https://opentdb.com/api_token.php?command=reset&token=${token}`,
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        window.alert(`Failed to reset token. ${err.name}:${err.message}`);
+      }
+    } finally {
+      window.alert("Token reset succesfully");
+    }
   }
 
   return (
@@ -59,7 +82,7 @@ const Navbar = () => {
               "
           >
             <section className="relative justify-center">
-              <h1 className="text-md md:text-lg lg:text-xl font-bold">
+              <h1 className="text-base sm:text-lg lg:text-xl font-semibold">
                 SETTINGS
               </h1>
               <button
@@ -85,7 +108,7 @@ const Navbar = () => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      copyToClipboard(token);
+                      copyToClipboard(sessionToken);
                     }}
                   >
                     copy
@@ -93,7 +116,7 @@ const Navbar = () => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      resetToken(token);
+                      resetToken(sessionToken);
                     }}
                   >
                     reset
@@ -129,9 +152,12 @@ const Navbar = () => {
                 <input
                   id="disableToken"
                   type="checkbox"
-                  checked={disableToken}
+                  checked={localSettingsValues.disableToken}
                   onChange={(e) => {
-                    setDisableToken(e.target.checked);
+                    setLocalSettingsValues((prev) => ({
+                      ...prev,
+                      disableToken: e.target.checked,
+                    }));
                   }}
                   className="h-4 aspect-square focus:outline-3"
                 />
@@ -143,9 +169,13 @@ const Navbar = () => {
                   type="number"
                   min="1"
                   max="50"
-                  value={amount}
+                  value={localSettingsValues.questionAmount}
                   onChange={(e) => {
-                    setAmount(Number(e.target.value));
+                    e.preventDefault();
+                    setLocalSettingsValues((prev) => ({
+                      ...prev,
+                      amount: Number(e.target.value),
+                    }));
                   }}
                   className="w-12 border-2 text-center rounded-md focus:outline-2"
                 />
@@ -161,8 +191,26 @@ const Navbar = () => {
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  localStorage.setItem("amount", String(amount));
-                  localStorage.setItem("disableToken", String(disableToken));
+                  setQuestionAmount(localSettingsValues.questionAmount);
+                  setDisableSessionToken(localSettingsValues.disableToken);
+                  window.alert("your settings were applied succesfully");
+                }}
+              >
+                Apply
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setQuestionAmount(localSettingsValues.questionAmount);
+                  setDisableSessionToken(localSettingsValues.disableToken);
+                  localStorage.setItem(
+                    "amount",
+                    String(localSettingsValues.questionAmount),
+                  );
+                  localStorage.setItem(
+                    "disableToken",
+                    String(localSettingsValues.disableToken),
+                  );
                   window.alert("your settings were saved succesfully");
                 }}
               >
@@ -171,8 +219,8 @@ const Navbar = () => {
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  setAmount(10);
-                  setDisableToken(false);
+                  setQuestionAmount(10);
+                  setDisableSessionToken(false);
                 }}
               >
                 Reset to Default

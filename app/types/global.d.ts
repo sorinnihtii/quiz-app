@@ -23,7 +23,22 @@ type DisplayContent = {
   subtitle?: string;
 };
 
+type Direction = "left" | "right";
+
 type Animating = {
   state: boolean;
-  direction: "left" | "right";
+  direction: Direction;
 };
+
+interface Slider {
+  currentIndex: number;
+  setCurrentIndex: Dispatch<SetStateAction<number>>;
+
+  delayedIndex: number;
+  setDelayedIndex: Dispatch<SetStateAction<number>>;
+
+  isAnimating: Animating;
+  setIsAnimating: Dispatch<SetStateAction<Animating>>;
+
+  updateCurrentIndex: (direction: Direction) => void;
+}

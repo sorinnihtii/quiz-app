@@ -7,11 +7,14 @@ import { motion } from "motion/react";
 import useFetch from "./tools/useFetch";
 import useCardSlider from "./tools/useCardSliderStates";
 import ErrorDisplay from "./components/errorDispaly";
+import { useEffect } from "react";
+import CardSliderArrowButton from "./components/cardSliderArrowButton";
 
 export default function Home() {
   const router = useRouter();
 
-  const amount = useSettings((s) => s.amount);
+  const preferredCategory = useSettings((s) => s.preferredCategory);
+  const setPreferredCategory = useSettings((s) => s.setPreferredCategory);
   const questionDifficulty = useSettings((s) => s.questionDifficulty);
   const setQuestionDifficulty = useSettings((s) => s.setQuestionDifficulty);
   const questionType = useSettings((s) => s.questionType);
@@ -22,34 +25,31 @@ export default function Home() {
     "trivia_categories",
   );
   const categories = data?.trivia_categories;
-  console.log(categories);
 
-  async function startQuiz() {
-    const amountParameter = `?amount=${amount}`;
-    const categoryParameter = `&category=${categories[slider.currentIndex].id}`;
+  const slider = useCardSlider(categories?.length - 1);
+
+  useEffect(() => {
+    if (preferredCategory && categories?.length)
+      categories.map((c: any, index: number) => {
+        if (c?.id === preferredCategory) {
+          slider.setCurrentIndex(index);
+          slider.setDelayedIndex(index);
+        }
+      });
+  }, [categories]);
+
+  function startQuiz() {
+    const categoryParameter = `?category=${categories[slider.currentIndex].id}`;
     const difficultyParameter =
       questionDifficulty != "any" ? `&difficulty=${questionDifficulty}` : "";
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
 
+    setPreferredCategory(categories[slider.currentIndex].id);
+    localStorage.setItem("category", categories[slider.currentIndex].id);
+
     router.push(
-      `/quiz${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}`,
+      `/quiz${categoryParameter}${difficultyParameter}${typeParameter}`,
     );
-  }
-  const quizCount = categories?.length - 1;
-
-  const slider = useCardSlider();
-
-  function updateCurrentIndex(direction: string) {
-    if (direction === "right")
-      slider.setCurrentIndex((prev: number) => {
-        if (prev === quizCount) return 0;
-        else return prev + 1;
-      });
-    else
-      slider.setCurrentIndex((prev: number) => {
-        if (prev === 0) return quizCount;
-        else return prev - 1;
-      });
   }
 
   return (
@@ -93,60 +93,14 @@ export default function Home() {
             </div>
 
             <div className="gap-10 [&_button]:duration-100">
-              <button
-                className="group relative triangle h-9 aspect-square -rotate-90 bg-transparent hover:scale-125 focus:bg-white"
-                onClick={() => {
-                  if (slider.isAnimating.state) return;
-                  const direction = "left";
-                  slider.setIsAnimating({
-                    state: true,
-                    direction: direction,
-                  });
-                  updateCurrentIndex(direction);
-                }}
-              >
-                <span
-                  className="
-                    triangle absolute h-7 aspect-square rotate-0
-                    top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
-                >
-                  <span
-                    className="
-                      triangle absolute h-5 aspect-square rotate-0
-                      top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color2"
-                  ></span>
-                </span>
-              </button>
+              <CardSliderArrowButton slider={slider} direction="left" />
               <button
                 className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
                 onClick={startQuiz}
               >
                 START QUIZ
               </button>
-              <button
-                className="group relative triangle h-9 aspect-square rotate-90 bg-transparent hover:scale-125 focus:bg-white"
-                onClick={() => {
-                  if (slider.isAnimating.state) return;
-                  const direction = "right";
-                  slider.setIsAnimating({
-                    state: true,
-                    direction: direction,
-                  });
-                  updateCurrentIndex(direction);
-                }}
-              >
-                <span
-                  className="
-                    triangle absolute h-7 aspect-square rotate-0
-                    top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
-                >
-                  <span
-                    className="
-                      triangle absolute h-5 aspect-square rotate-0
-                      top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color2"
-                  ></span>
-                </span>
-              </button>
+              <CardSliderArrowButton slider={slider} direction="right" />
             </div>
 
             <div className="gap-4">

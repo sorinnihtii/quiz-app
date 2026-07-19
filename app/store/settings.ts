@@ -2,23 +2,33 @@ import { create } from "zustand";
 import getToken from "../tools/getToken";
 
 type AppSettings = {
-  amount: number;
-  setAmount: (newValue: number) => void;
+  preferredCategory: number;
+  setPreferredCategory: (newValue: number) => void;
+  questionAmount: number;
+  setQuestionAmount: (newValue: number) => void;
   questionDifficulty: QuestionDifficulty;
   setQuestionDifficulty: (newValue: QuestionDifficulty) => void;
   questionType: QuestionType;
   setQuestionType: (newValue: QuestionType) => void;
-  disableToken: boolean;
-  setDisableToken: (newValue: boolean) => void;
-  token: string;
-  setToken: (newValue: string) => void;
-  initToken: () => void;
+  disableSessionToken: boolean;
+  setDisableSessionToken: (newValue: boolean) => void;
+  sessionToken: string;
+  setSessionToken: (newValue: string) => void;
+  initSessionToken: () => void;
 };
 
 const storageAvailable: boolean = typeof window !== "undefined";
 
+const category = storageAvailable
+  ? Number(localStorage.getItem("category"))
+    ? Number(localStorage.getItem("category"))
+    : 9
+  : 9;
+
 const amount = storageAvailable
-  ? Number(localStorage.getItem("amount")) || 10
+  ? Number(localStorage.getItem("amount"))
+    ? Number(localStorage.getItem("amount"))
+    : 10
   : 10;
 
 const questionDifficulty = storageAvailable
@@ -38,8 +48,11 @@ const disableToken = storageAvailable
   : false;
 
 export const useSettings = create<AppSettings>((set) => ({
-  amount: amount,
-  setAmount: (newValue) => set({ amount: newValue }),
+  preferredCategory: category,
+  setPreferredCategory: (newValue) => set({ preferredCategory: newValue }),
+
+  questionAmount: amount,
+  setQuestionAmount: (newValue) => set({ questionAmount: newValue }),
 
   questionDifficulty: questionDifficulty,
   setQuestionDifficulty: (newValue) => set({ questionDifficulty: newValue }),
@@ -47,20 +60,20 @@ export const useSettings = create<AppSettings>((set) => ({
   questionType: questionType,
   setQuestionType: (newValue) => set({ questionType: newValue }),
 
-  disableToken: disableToken,
-  setDisableToken: (newValue) => set({ disableToken: newValue }),
+  disableSessionToken: disableToken,
+  setDisableSessionToken: (newValue) => set({ disableSessionToken: newValue }),
 
-  token: "",
-  setToken: (newValue) => set({ token: newValue }),
+  sessionToken: "",
+  setSessionToken: (newValue) => set({ sessionToken: newValue }),
 
-  initToken: async () => {
-    let token = localStorage.getItem("token");
-    if (!token) {
-      token = await getToken();
+  initSessionToken: async () => {
+    let sessionToken = localStorage.getItem("sessionToken");
+    if (!sessionToken) {
+      sessionToken = await getToken();
     }
 
-    if (token) {
-      set({ token });
+    if (sessionToken) {
+      set({ sessionToken });
     }
   },
 }));

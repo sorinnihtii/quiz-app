@@ -9,7 +9,7 @@ export default async function getToken() {
     if (!data?.token) throw new Error(`Error Code ${data.response_code}`);
     console.log("gettoken data", data);
     if (typeof window !== "undefined")
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("sessionToken", data.token);
     return data.token;
   } catch (err) {
     console.error("error fetching token: ", err);

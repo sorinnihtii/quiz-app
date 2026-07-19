@@ -50,8 +50,8 @@ const CardSlider = ({
 
   const animation = isAnimating.state
     ? isAnimating.direction === "right"
-      ? "transition-all duration-400 slide-right"
-      : "transition-all duration-400 slide-left"
+      ? "transition-all duration-500 slide-right"
+      : "transition-all duration-500 slide-left"
     : "transiton-none";
 
   const titleStyles = "text-color5";

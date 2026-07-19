@@ -6,13 +6,11 @@ import CardSlider from "../components/cardSlider";
 import { useSettings } from "../store/settings";
 import { motion } from "motion/react";
 import useFetch from "../tools/useFetch";
-import getToken from "../tools/getToken";
 import useCardSlider from "../tools/useCardSliderStates";
 import ErrorDisplay from "../components/errorDispaly";
 
 interface Props {
   searchParams: {
-    amount?: string;
     category?: string;
     difficulty?: string;
     type?: string;
@@ -33,17 +31,18 @@ function shuffle(array: Answer[]) {
 }
 
 function QuizClient({ searchParams }: Props) {
-  const disableToken = useSettings((s) => s.disableToken);
-  const token = useSettings((s) => s.token);
-  const initToken = useSettings((s) => s.initToken);
+  const disableSessionToken = useSettings((s) => s.disableSessionToken);
+  const questionAmount = useSettings((s) => s.questionAmount);
+  const sessionToken = useSettings((s) => s.sessionToken);
+  const initSessionToken = useSettings((s) => s.initSessionToken);
 
   const slider = useCardSlider();
 
   useEffect(() => {
-    initToken();
-  }, [initToken]);
+    initSessionToken();
+  }, [initSessionToken]);
 
-  const amountParameter = `?amount=${searchParams.amount}`;
+  const amountParameter = `?amount=${questionAmount}`;
   const categoryParameter = `&category=${searchParams.category}`;
   const difficultyParameter =
     searchParams.difficulty != null
@@ -51,7 +50,7 @@ function QuizClient({ searchParams }: Props) {
       : "";
   const typeParameter =
     searchParams.type != null ? `&type=${searchParams.type}` : "";
-  const tokenParameter = disableToken ? "" : `&token=${token}`;
+  const tokenParameter = disableSessionToken ? "" : `&token=${sessionToken}`;
 
   const { data, isLoading, error, responseCode, refetch } = useFetch(
     `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
