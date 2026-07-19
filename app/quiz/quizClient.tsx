@@ -36,8 +36,6 @@ function QuizClient({ searchParams }: Props) {
   const sessionToken = useSettings((s) => s.sessionToken);
   const initSessionToken = useSettings((s) => s.initSessionToken);
 
-  const slider = useCardSlider();
-
   useEffect(() => {
     initSessionToken();
   }, [initSessionToken]);
@@ -85,6 +83,8 @@ function QuizClient({ searchParams }: Props) {
       };
     });
   }, [data]);
+
+  const slider = useCardSlider(displayContent?.length - 1);
 
   const [score, setScore] = useState<number>(0);
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
