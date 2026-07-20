@@ -20,7 +20,7 @@ const Navbar = () => {
         className="
           flex items-center justify-center gap-[5%]
           *:text-xs *:md:text-sm *:font-semibold *:tracking-wider
-          *:px-4 *:py-0.75 *:hover:scale-120 *:focus:outline-3 *:outline-color4 *:underline *:underline-offset-8"
+          *:px-4 *:py-0.75 md:*:hover:scale-120 *:focus:outline-3 *:outline-color4 *:underline *:underline-offset-8"
       >
         <Link
           className={`${pathname === "/" ? "text-color4 decoration-color4" : "text-color5 decoartion-color5"}`}

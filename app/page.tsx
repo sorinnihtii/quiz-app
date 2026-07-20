@@ -74,7 +74,7 @@ export default function Home() {
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
               [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
               [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
-              [&>div>select]:focus-within:scale-110 [&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
+              [&>div>select]:focus-within:scale-110 md:[&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
               [&_button]:focus:outline-3 **:outline-color4 **:font-semibold **:text-color5"
           >
             <div className="gap-4">
@@ -96,7 +96,7 @@ export default function Home() {
             <div className="gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-10 [&_button]:duration-100">
               <CardSliderArrowButton slider={slider} direction="left" />
               <button
-                className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
+                className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 md:hover:scale-110 whitespace-nowrap"
                 onClick={startQuiz}
               >
                 START QUIZ

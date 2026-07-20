@@ -8,7 +8,7 @@ const CardSliderArrowButton = ({ slider, direction }: Props) => {
     <button
       aria-label={`arrow-${direction}`}
       className={`
-        group relative triangle h-9 aspect-square bg-transparent hover:scale-125 focus:bg-color4
+        group relative triangle h-9 aspect-square bg-transparent md:hover:scale-125 focus:bg-color4
         ${direction === "right" ? "rotate-90" : "-rotate-90"}
         `}
       onClick={() => {

@@ -139,7 +139,7 @@ function QuizClient({ searchParams }: Props) {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold hover:scale-110 border-3 border-color5 focus:outline-3 outline-color4
+                    px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold md:hover:scale-110 border-3 border-color5 focus:outline-3 outline-color4
                     ${!slider.isAnimating.state && (answer.correct ? "bg-green-400" : "bg-red-400")}
                     `}
                   >
@@ -156,7 +156,7 @@ function QuizClient({ searchParams }: Props) {
                   }}
                   className="
                   px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2
-                  hover:scale-110 border-3 border-color5   focus:outline-3 outline-color4"
+                  md:hover:scale-110 border-3 border-color5   focus:outline-3 outline-color4"
                 >
                   New Quiz
                 </button>
