@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
-import { useSettings } from "../store/settings";
+import { useSettings } from "../storage/settings";
 import { motion } from "motion/react";
 import useFetch from "../tools/useFetch";
 import useCardSlider from "../tools/useCardSliderStates";
@@ -86,7 +86,7 @@ function QuizClient({ searchParams }: Props) {
 
   const slider = useCardSlider(displayContent?.length - 1);
 
-  const [score, setScore] = useState<number>(0);
+  const [score, setScore] = useState(0);
   const [startedNewQuiz, setStartedNewQuiz] = useState(false);
 
   useEffect(() => {
@@ -139,8 +139,8 @@ function QuizClient({ searchParams }: Props) {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold hover:scale-110 border-3 border-color5 focus:outline-3 outline-color3
-                    ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
+                    px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold hover:scale-110 border-3 border-color5 focus:outline-3 outline-color4
+                    ${!slider.isAnimating.state && (answer.correct ? "bg-green-400" : "bg-red-400")}
                     `}
                   >
                     {decode(answer.value)}
@@ -156,7 +156,7 @@ function QuizClient({ searchParams }: Props) {
                   }}
                   className="
                   px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2
-                  hover:scale-110 border-3 border-color5   focus:outline-3 outline-color3"
+                  hover:scale-110 border-3 border-color5   focus:outline-3 outline-color4"
                 >
                   New Quiz
                 </button>

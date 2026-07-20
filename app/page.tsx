@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import CardSlider from "./components/cardSlider";
-import { useSettings } from "./store/settings";
+import { useSettings } from "./storage/settings";
 import { motion } from "motion/react";
 import useFetch from "./tools/useFetch";
 import useCardSlider from "./tools/useCardSliderStates";
@@ -30,7 +30,7 @@ export default function Home() {
 
   useEffect(() => {
     if (preferredCategory && categories?.length)
-      categories.map((c: any, index: number) => {
+      categories.map((c: DisplayContent, index: number) => {
         if (c?.id === preferredCategory) {
           slider.setCurrentIndex(index);
           slider.setDelayedIndex(index);
@@ -72,13 +72,14 @@ export default function Home() {
             className="
               grid grid-rows-3 md:grid-cols-3 sm:grid-rows-1 w-[80dvw] mx-[10dvw] my-auto gap-4
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
-              [&>div>select]:w-30 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
+              [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
               [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
               [&>div>select]:focus-within:scale-110 [&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
-              [&_button]:focus:outline-3 **:outline-color3 **:font-semibold **:text-color5"
+              [&_button]:focus:outline-3 **:outline-color4 **:font-semibold **:text-color5"
           >
             <div className="gap-4">
               <select
+                aria-label="Question Difficulty"
                 value={questionDifficulty}
                 onChange={(e) => {
                   setQuestionDifficulty(e.target.value as QuestionDifficulty);
@@ -92,7 +93,7 @@ export default function Home() {
               </select>
             </div>
 
-            <div className="gap-10 [&_button]:duration-100">
+            <div className="gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-10 [&_button]:duration-100">
               <CardSliderArrowButton slider={slider} direction="left" />
               <button
                 className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 hover:scale-110 whitespace-nowrap"
@@ -105,6 +106,7 @@ export default function Home() {
 
             <div className="gap-4">
               <select
+                aria-label="Question Type"
                 value={questionType}
                 onChange={(e) => {
                   setQuestionType(e.target.value as QuestionType);

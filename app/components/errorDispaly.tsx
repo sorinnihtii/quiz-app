@@ -31,7 +31,7 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
           className="
             px-4 py-1.5 border-3 border-color5 rounded-lg
             font-semibold text-xs md:text-base bg-color2
-            hover:scale-110 focus:outline-3 outline-color3"
+            hover:scale-110 focus:outline-3 outline-color4"
           onClick={() => window.location.reload()}
         >
           Try Again

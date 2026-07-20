@@ -11,6 +11,10 @@ type Question = {
   type: QuestionsType;
 };
 
+type Categories = {
+  trivia_categories: DisplayContent[];
+};
+
 type Answer = {
   value: string;
   correct: boolean;

@@ -13,6 +13,33 @@ interface Props {
   score?: number;
 }
 
+function getPerformance(total: number, score?: number) {
+  if (score == null) return "";
+  if (score === total) return "Perfect!";
+  if (score / total >= 0.6) return "Well done!";
+  if (score / total >= 0.4) return "Not bad!";
+  return "Better luck next time!";
+}
+
+function getContent(index: number, content: DisplayContent[], score?: number) {
+  if (score == null)
+    return {
+      title: content[index]?.name,
+      subtitle: content[index]?.subtitle,
+    };
+  return index === content.length
+    ? {
+        title: getPerformance(content.length, score),
+        subtitle: `Score: ${score}/${content.length}`,
+      }
+    : {
+        title: content[index]?.name,
+        subtitle: "",
+      };
+}
+
+const titleStyles = "text-color5";
+
 const CardSlider = ({
   content,
   isAnimating,
@@ -30,31 +57,14 @@ const CardSlider = ({
     setDelayedIndex(currentIndex);
   }
 
-  function getPerformance() {
-    if (!score) return "";
-    if (score === content.length) return "Perfect!";
-    if (score / content.length >= 0.6) return "Well done!";
-    if (score / content.length >= 0.4) return "Not bad!";
-    return "Better luck next time!";
-  }
-
-  function getTitle(index: number) {
-    if (index < content.length) return content[index]?.name;
-    else return score ? getPerformance() : "";
-  }
-
-  function getSubtitle(index: number) {
-    if (!score) return content[index].subtitle;
-    return index === content.length ? `Score: ${score}/${content.length}` : "";
-  }
-
   const animation = isAnimating.state
     ? isAnimating.direction === "right"
       ? "transition-all duration-500 slide-right"
       : "transition-all duration-500 slide-left"
-    : "transiton-none";
+    : "transition-none";
 
-  const titleStyles = "text-color5";
+  const currentContent = getContent(currentIndex, content, score);
+  const delayedContent = getContent(delayedIndex, content, score);
 
   return (
     <motion.div
@@ -70,21 +80,23 @@ const CardSlider = ({
         {content.length > 0 && (
           <div className="w-max flex h-full gap-[20dvw] translate-x-[-100dvw]">
             <Card
-              title={decode(getTitle(currentIndex))}
-              subtitle={getSubtitle(currentIndex)}
+              inert
+              title={currentContent.title}
+              subtitle={currentContent.subtitle}
               titleStyles={titleStyles}
               animation={animation}
             />
             <Card
-              title={decode(getTitle(delayedIndex))}
-              subtitle={getSubtitle(delayedIndex)}
+              title={delayedContent.title}
+              subtitle={delayedContent.subtitle}
               titleStyles={titleStyles}
               animation={animation}
               onTransitionEnd={handleTransitionEnd}
             />
             <Card
-              title={decode(getTitle(currentIndex))}
-              subtitle={getSubtitle(currentIndex)}
+              inert
+              title={currentContent.title}
+              subtitle={currentContent.subtitle}
               titleStyles={titleStyles}
               animation={animation}
             />
