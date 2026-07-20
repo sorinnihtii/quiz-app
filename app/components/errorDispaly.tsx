@@ -28,11 +28,11 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
       />
       <section className="flex w-[80dvw] h-full items-center justify-center gap-10">
         <button
+          onClick={() => window.location.reload()}
           className="
             px-4 py-1.5 border-3 border-color5 rounded-lg
             font-semibold text-xs md:text-base bg-color2
             md:hover:scale-110 focus:outline-3 outline-color4"
-          onClick={() => window.location.reload()}
         >
           Try Again
         </button>

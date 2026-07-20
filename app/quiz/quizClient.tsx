@@ -140,7 +140,7 @@ function QuizClient({ searchParams }: Props) {
                     }}
                     className={`
                     px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold md:hover:scale-110 border-3 border-color5 focus:outline-3 outline-color4
-                    ${!slider.isAnimating.state && (answer.correct ? "bg-green-400" : "bg-red-400")}
+                    ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
                     `}
                   >
                     {decode(answer.value)}
@@ -150,8 +150,8 @@ function QuizClient({ searchParams }: Props) {
             {slider.currentIndex === displayContent.length &&
               !slider.isAnimating.state && (
                 <button
+                  type="button"
                   onClick={(e) => {
-                    e.preventDefault();
                     startNewQuiz();
                   }}
                   className="

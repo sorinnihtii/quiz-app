@@ -16,7 +16,11 @@ function copyToClipboard(text: string) {
   navigator.clipboard
     .writeText(text)
     .then(() => alert("text copied to clipboard succesfully"))
-    .catch((err) => console.error("Failed to copy text: ", err));
+    .catch((err) => {
+      if (err instanceof Error)
+        window.alert(`Failed to copy text: ${err.message}`);
+      console.error(err);
+    });
 }
 
 const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
@@ -32,10 +36,9 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
     initSessionToken();
   }, [initSessionToken]);
 
-  const [localSettingsValues, setLocalSettingsValues] = useState({
-    questionAmount: questionAmount.toString(),
-    disableToken: disableSessionToken,
-  });
+  const [questionAmountController, setQuestionAmountController] = useState(
+    questionAmount.toString(),
+  );
 
   const firstInputRef = useRef<HTMLButtonElement>(null);
 
@@ -48,10 +51,14 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
       localStorage.removeItem("sessionToken");
       const newToken = await getToken();
       if (!newToken) return;
-      window.alert("You succesffully received a new token");
       setSessionToken(newToken);
     } catch (err) {
+      if (err instanceof Error) {
+        window.alert(`Failed to get new token: ${err.message}`);
+      }
       console.error(err);
+    } finally {
+      window.alert("You succesffully received a new token");
     }
   }
 
@@ -72,21 +79,26 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
 
   function saveChanges() {
     if (
-      Number(localSettingsValues.questionAmount) < 5 ||
-      Number(localSettingsValues.questionAmount) > 50
+      Number(questionAmountController) < 5 ||
+      Number(questionAmountController) > 50
     ) {
       window.alert("Questions per Quiz must be between 5 and 50");
       return;
     }
-    setQuestionAmount(Number(localSettingsValues.questionAmount));
-    setDisableSessionToken(localSettingsValues.disableToken);
-
-    localStorage.setItem("amount", String(localSettingsValues.questionAmount));
-    localStorage.setItem(
-      "disableToken",
-      String(localSettingsValues.disableToken),
-    );
-    window.alert("your settings were saved succesfully");
+    setQuestionAmount(Number(questionAmountController));
+    try {
+      localStorage.setItem("questionAmount", questionAmount.toString());
+      localStorage.setItem(
+        "disableSessionToken",
+        disableSessionToken.toString(),
+      );
+    } catch (err) {
+      if (err instanceof Error)
+        window.alert(`Failed to save settings: ${err.message}`);
+      console.error(err);
+    } finally {
+      window.alert("your settings were saved succesfully");
+    }
   }
 
   return (
@@ -98,20 +110,20 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
           exit={{ scale: 0 }}
           transition={{ duration: 0.1 }}
           className="
-              fixed grid grid-rows-[auto_auto_auto] text-center w-[95dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
-              left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
-              text-xs sm:text-sm xl:text-base
-              [&>section]:flex [&>section]:items-center [&>section]:py-5 [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5
-              "
+            fixed grid grid-rows-[auto_auto_auto] text-center w-[95dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
+            left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
+            text-xs sm:text-sm xl:text-base
+            [&>section]:flex [&>section]:items-center [&>section]:py-5
+            [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5"
         >
           <section className="relative justify-center">
-            <h1 className="text-base sm:text-lg lg:text-xl font-semibold">
+            <h1 className="font-semibold text-base sm:text-lg lg:text-xl">
               SETTINGS
             </h1>
             <button
+              type="button"
               ref={firstInputRef}
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 setIsSettingsVisble(false);
               }}
               className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125 focus:outline-3 outline-color5"
@@ -126,41 +138,48 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
               [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4 [&_input]:outline-color5"
           >
-            <div>
-              <label htmlFor="token">User Token</label>
+            <div role="group" aria-labelledby="session-token-heading">
+              <h3 id="session-token-heading">Session Token</h3>
               <div
                 className="
-                    flex items-center gap-3
-                    [&>button]:underline [&>button]:font-semibold md:[&>button]:hover:translate-y-[-10%] [&>button]:duration-200
-                    "
+                  flex items-center gap-3
+                  [&>button]:underline [&>button]:font-semibold md:[&>button]:hover:translate-y-[-10%] [&>button]:duration-200"
               >
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  aria-label="Copy session token to clipboard"
+                  onClick={() => {
                     copyToClipboard(sessionToken);
                   }}
                 >
                   copy
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  aria-label="Reset your session token"
+                  onClick={() => {
                     resetToken(sessionToken);
                   }}
                 >
                   reset
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  aria-label="Create a new session token"
+                  onClick={() => {
                     getNewToken();
                   }}
                 >
                   new
                 </button>
-                <div tabIndex={0} className="group relative">
-                  <FiAlertCircle className="text-amber-500" />
+                <button className="group relative">
+                  <FiAlertCircle
+                    aria-hidden="true"
+                    className="text-amber-500"
+                  />
                   <span
+                    id="token-help"
+                    role="tooltip"
                     className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[150%]
                       rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
@@ -180,20 +199,17 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                       group-active:visible group-active:opacity-100 group-active:bottom-[110%]
                       md:group-hover:visible md:group-hover:opacity-100 md:group-hover:bottom-[110%]"
                   ></span>
-                </div>
+                </button>
               </div>
             </div>
             <div>
-              <label htmlFor="disableToken">Disable Token</label>
+              <label htmlFor="disableSessionToken">Disable Session Token</label>
               <input
-                id="disableToken"
+                id="disableSessionToken"
                 type="checkbox"
-                checked={localSettingsValues.disableToken}
+                checked={disableSessionToken}
                 onChange={(e) => {
-                  setLocalSettingsValues((prev) => ({
-                    ...prev,
-                    disableToken: e.target.checked,
-                  }));
+                  setDisableSessionToken(e.target.checked);
                 }}
                 className="h-4 aspect-square focus:outline-3"
               />
@@ -208,15 +224,12 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     saveChanges();
+                    setIsSettingsVisble(false);
                   }
                 }}
-                value={localSettingsValues.questionAmount}
+                value={questionAmountController}
                 onChange={(e) => {
-                  e.preventDefault();
-                  setLocalSettingsValues((prev) => ({
-                    ...prev,
-                    questionAmount: e.target.value,
-                  }));
+                  setQuestionAmountController(e.target.value);
                 }}
                 className="w-12 border-2 text-center rounded-md focus:outline-3"
               />
@@ -230,16 +243,16 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               "
           >
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                saveChanges();
-              }}
+              type="button"
+              aria-label="Save settings"
+              onClick={saveChanges}
             >
               Save
             </button>
             <button
-              onClick={(e) => {
-                e.preventDefault();
+              aria-label="Reset settings to default"
+              type="button"
+              onClick={() => {
                 setQuestionAmount(10);
                 setDisableSessionToken(false);
               }}

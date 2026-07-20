@@ -6,7 +6,7 @@ interface Props {
 const CardSliderArrowButton = ({ slider, direction }: Props) => {
   return (
     <button
-      aria-label={`arrow-${direction}`}
+      aria-label={direction === "left" ? "Previous slide" : "Next slide"}
       className={`
         group relative triangle h-9 aspect-square bg-transparent md:hover:scale-125 focus:bg-color4
         ${direction === "right" ? "rotate-90" : "-rotate-90"}
@@ -22,8 +22,8 @@ const CardSliderArrowButton = ({ slider, direction }: Props) => {
     >
       <span
         className="
-            triangle absolute h-7 aspect-square rotate-0
-            top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
+          triangle absolute h-7 aspect-square rotate-0
+          top-10/18 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color5"
       >
         <span
           className="

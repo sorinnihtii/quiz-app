@@ -30,13 +30,13 @@ export default function Home() {
 
   useEffect(() => {
     if (preferredCategory && categories?.length)
-      categories.map((c: DisplayContent, index: number) => {
-        if (c?.id === preferredCategory) {
+      categories.map((category: DisplayContent, index: number) => {
+        if (category.id === preferredCategory) {
           slider.setCurrentIndex(index);
           slider.setDelayedIndex(index);
         }
       });
-  }, [categories]);
+  }, [categories, preferredCategory]);
 
   function startQuiz() {
     const categoryParameter = `?category=${categories[slider.currentIndex].id}`;
@@ -45,7 +45,10 @@ export default function Home() {
     const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
 
     setPreferredCategory(categories[slider.currentIndex].id);
-    localStorage.setItem("category", categories[slider.currentIndex].id);
+    localStorage.setItem(
+      "preferredCategory",
+      categories[slider.currentIndex].id,
+    );
 
     router.push(
       `/quiz${categoryParameter}${difficultyParameter}${typeParameter}`,

@@ -19,15 +19,15 @@ type AppSettings = {
 
 const storageAvailable: boolean = typeof window !== "undefined";
 
-const category = storageAvailable
-  ? Number(localStorage.getItem("category"))
-    ? Number(localStorage.getItem("category"))
+const preferredCategory = storageAvailable
+  ? Number(localStorage.getItem("preferredCategory"))
+    ? Number(localStorage.getItem("preferredCategory"))
     : 9
   : 9;
 
-const amount = storageAvailable
-  ? Number(localStorage.getItem("amount"))
-    ? Number(localStorage.getItem("amount"))
+const questionAmount = storageAvailable
+  ? Number(localStorage.getItem("questionAmount"))
+    ? Number(localStorage.getItem("questionAmount"))
     : 10
   : 10;
 
@@ -43,15 +43,15 @@ const questionType = storageAvailable
     : "any"
   : "any";
 
-const disableToken = storageAvailable
-  ? localStorage.getItem("disableToken") === "true"
+const disableSessionToken = storageAvailable
+  ? localStorage.getItem("disableSessionToken") === "true"
   : false;
 
 export const useSettings = create<AppSettings>((set) => ({
-  preferredCategory: category,
+  preferredCategory: preferredCategory,
   setPreferredCategory: (newValue) => set({ preferredCategory: newValue }),
 
-  questionAmount: amount,
+  questionAmount: questionAmount,
   setQuestionAmount: (newValue) => set({ questionAmount: newValue }),
 
   questionDifficulty: questionDifficulty,
@@ -60,7 +60,7 @@ export const useSettings = create<AppSettings>((set) => ({
   questionType: questionType,
   setQuestionType: (newValue) => set({ questionType: newValue }),
 
-  disableSessionToken: disableToken,
+  disableSessionToken: disableSessionToken,
   setDisableSessionToken: (newValue) => set({ disableSessionToken: newValue }),
 
   sessionToken: "",
