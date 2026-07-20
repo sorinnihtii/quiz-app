@@ -163,7 +163,10 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                   <span
                     className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[140%] group-hover:bottom-[150%] rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
-                      transition-all duration-100 opacity-0 invisible group-focus:opacity-100 group-focus:visible group-hover:opacity-100 group-hover:visible"
+                      transition-all duration-100 opacity-0 invisible
+                      group-focus:opacity-100 group-focus:visible
+                      group-hover:opacity-100 group-hover:visible
+                      group-active:opacity-100 group-active:visible"
                   >
                     Avoid creating new tokens unless necessary. In most cases
                     resetting your current token is enough
@@ -171,7 +174,10 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                   <span
                     className="
                       absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full group-hover:bottom-[110%] bg-amber-500
-                      transition-all duration-100 opacity-0 invisible group-focus:opacity-100 group-focus:visible group-hover:opacity-100 group-hover:visible"
+                      transition-all duration-100 opacity-0 invisible
+                      group-focus:opacity-100 group-focus:visible
+                      group-hover:opacity-100 group-hover:visible
+                      group-active:opacity-100 group-active:visible"
                   ></span>
                 </div>
               </div>

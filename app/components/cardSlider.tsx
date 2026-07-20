@@ -24,7 +24,7 @@ function getPerformance(total: number, score?: number) {
 function getContent(index: number, content: DisplayContent[], score?: number) {
   if (score == null)
     return {
-      title: content[index]?.name,
+      title: decode(content[index]?.name),
       subtitle: content[index]?.subtitle,
     };
   return index === content.length
@@ -33,7 +33,7 @@ function getContent(index: number, content: DisplayContent[], score?: number) {
         subtitle: `Score: ${score}/${content.length}`,
       }
     : {
-        title: content[index]?.name,
+        title: decode(content[index]?.name),
         subtitle: "",
       };
 }
