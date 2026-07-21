@@ -1,16 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-color1: #c9e1f8;
-  --color-color2: #f9dc5c;
+  --color-color1: #bad5af;
+  --color-color2: #fae275;
   --color-color3: #ecf8fd;
   --color-color4: #593c36;
   --color-color5: #212738;
 }
 
+.gradient-1 {
+  background: #c4dcbc;
+  background: linear-gradient(
+    135deg,
+    rgba(196, 220, 188, 1) 0%,
+    rgba(186, 213, 175, 1) 50%,
+    rgba(173, 206, 161, 1) 100%
+  );
+}
+
 button,
 select {
-  @apply cursor-pointer;
+  @apply cursor-pointer opacity-100;
+}
+
+button.common {
+  @apply bg-color2 text-color5 border-3 border-color5 focus:outline-3 outline-color4 md:hover:scale-110 whitespace-nowrap;
 }
 
 .triangle {

@@ -76,9 +76,8 @@ export default function Home() {
               grid grid-rows-3 md:grid-cols-3 sm:grid-rows-1 w-[80dvw] mx-[10dvw] my-auto gap-4
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
               [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
-              [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2
-              [&>div>select]:focus-within:scale-110 md:[&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 
-              [&_button]:focus:outline-3 **:outline-color4 **:font-semibold **:text-color5"
+              [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2 [&>div>select]:font-medium [&>div>select>option]:font-medium 
+              [&>div>select]:focus-within:scale-110 md:[&>div>select]:hover:scale-110 [&>div>select]:focus:outline-3 [&>div>select]:focus:outline-color4"
           >
             <div className="gap-4">
               <select
@@ -99,7 +98,7 @@ export default function Home() {
             <div className="gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-10 [&_button]:duration-100">
               <CardSliderArrowButton slider={slider} direction="left" />
               <button
-                className="text-xs md:text-sm lg:text-base px-4 py-1.5 rounded-xl border-3 bg-color2 md:hover:scale-110 whitespace-nowrap"
+                className="common px-4 py-1.5 font-semibold rounded-xl text-xs md:text-sm lg:text-base"
                 onClick={startQuiz}
               >
                 START QUIZ
@@ -127,7 +126,7 @@ export default function Home() {
         <ErrorDisplay responseCode={responseCode} error={error} />
       ) : (
         isLoading && (
-          <div className="flex items-center justify-center h-full text-white text-xl">
+          <div className="flex items-center justify-center h-full font-semibold text-color5 text-xl">
             Loading...
           </div>
         )

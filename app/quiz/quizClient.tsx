@@ -167,7 +167,7 @@ function QuizClient({ searchParams }: Props) {
         <ErrorDisplay responseCode={responseCode} error={error} />
       ) : (
         isLoading && (
-          <div className="flex items-center justify-center h-full text-white text-xl">
+          <div className="flex items-center justify-center h-full font-semibold text-color5 text-xl">
             Loading...
           </div>
         )

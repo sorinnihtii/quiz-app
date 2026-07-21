@@ -111,8 +111,9 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
           transition={{ duration: 0.1 }}
           className="
             fixed grid grid-rows-[auto_auto_auto] text-center w-[95dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
-            left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2 border-4 border-color5 text-color5 rounded-xl bg-color3
+            left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2
             text-xs sm:text-sm xl:text-base
+            ring-2 ring-color5/5 border-4 border-color5 text-color5 rounded-xl bg-color3
             [&>section]:flex [&>section]:items-center [&>section]:py-5
             [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5"
         >
@@ -134,9 +135,9 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
 
           <section
             className="
-              flex-col justify-start gap-5
-              [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
-              [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4 [&_input]:outline-color5"
+              flex-col justify-start gap-y-5
+              [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%] [&_input]:outline-color5
+              [&>div>h3]:before:content-['>'] [&>div>h3]:before:mx-4 [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4"
           >
             <div role="group" aria-labelledby="session-token-heading">
               <h3 id="session-token-heading">Session Token</h3>
@@ -236,16 +237,12 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
             </div>
           </section>
 
-          <section
-            className="
-                 justify-center gap-y-2
-                *:tracking-wide *:px-4 *:py-px *:rounded-sm *:bg-color2 *:text-color5 *:font-semibold *:border-2 *:focus:outline-3 *:outline-color5
-              "
-          >
+          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md">
             <button
               type="button"
               aria-label="Save settings"
               onClick={saveChanges}
+              className="common"
             >
               Save
             </button>
@@ -256,6 +253,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 setQuestionAmount(10);
                 setDisableSessionToken(false);
               }}
+              className="common"
             >
               Reset to Default
             </button>

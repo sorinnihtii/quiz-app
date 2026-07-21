@@ -28,7 +28,7 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="grid grid-rows-[15%_85%] h-dvh w-dvw overflow-hidden bg-color1">
+      <body className="grid grid-rows-[15%_85%] h-dvh w-dvw overflow-hidden gradient-1">
         <Navbar />
         <main className="">{children}</main>
       </body>
