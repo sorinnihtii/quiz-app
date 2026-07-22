@@ -67,9 +67,9 @@ export default function Home() {
             className="
               grid grid-rows-3 md:grid-cols-3 sm:grid-rows-1 w-[80dvw] mx-[10dvw] my-auto gap-4
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
-              [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-3 
-              [&>div>select]:rounded-md [&>div>select]:text-xs [&>div>select]:bg-color2 [&>div>select]:font-medium [&>div>select>option]:font-medium 
-              [&>div>select]:focus-within:scale-110 md:[&>div>select]:hover:scale-110 [&>div>select]:focus-visible:outline-3 [&>div>select]:focus-visible:outline-color4"
+              [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-2 [&>div>select]:rounded-md
+              [&>div>select]:text-xs [&>div>select]:bg-color2 [&>div>select]:font-medium md:[&>div>select]:hover:scale-110 
+              [&>div>select]:focus-visible:outline-2 lg:[&>div>select]:focus-visible:outline-3 [&>div>select]:focus-visible:outline-color4"
           >
             <div className="gap-4">
               <select
@@ -90,7 +90,7 @@ export default function Home() {
             <div className="gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-10 [&_button]:duration-100">
               <CardSliderArrowButton slider={slider} direction="left" />
               <button
-                className="common bg-color2 px-4 py-1.5 font-semibold rounded-xl text-xs md:text-sm lg:text-base"
+                className="common px-4 py-1.5 font-semibold rounded-xl border-3 text-xs md:text-sm lg:text-base bg-color2 whitespace-nowrap"
                 onClick={startQuiz}
               >
                 START QUIZ

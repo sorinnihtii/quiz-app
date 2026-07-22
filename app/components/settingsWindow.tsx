@@ -98,6 +98,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
       console.error(err);
     } finally {
       window.alert("your settings were saved succesfully");
+      firstInputRef.current?.focus();
     }
   }
 
@@ -113,7 +114,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
             fixed grid grid-rows-[auto_auto_auto] text-center w-[95dvw] sm:w-[60dvw] md:w-[55dvw] lg:w-[50dvw] xl:w-[35dvw] 
             left-1/2 -translate-x-1/2 z-100 top-1/2 -translate-y-1/2
             text-xs sm:text-sm xl:text-base
-            ring-2 ring-color5/5 border-4 border-color5 text-color5 rounded-xl bg-color3
+            ring-2 ring-color5/5 border-3 border-color5 text-color5 rounded-xl bg-color3
             [&>section]:flex [&>section]:items-center [&>section]:py-5
             [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5"
         >
@@ -237,7 +238,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
             </div>
           </section>
 
-          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md *:bg-color2">
+          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md *:bg-color2 *:border-2">
             <button
               type="button"
               aria-label="Save settings"
@@ -251,7 +252,10 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               type="button"
               onClick={() => {
                 setQuestionAmount(10);
+                setQuestionAmountController("10");
                 setDisableSessionToken(false);
+                saveChanges();
+                firstInputRef.current?.focus();
               }}
               className="common"
             >

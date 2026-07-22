@@ -36,7 +36,7 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
           ref={tryAgainRef}
           onClick={() => window.location.reload()}
           className="
-            common bg-color2 px-4 py-1.25 rounded-lg font-semibold text-xs md:text-base"
+            common bg-color2 px-4 py-1.25 rounded-lg font-semibold border-3 text-xs md:text-base"
         >
           Try Again
         </button>

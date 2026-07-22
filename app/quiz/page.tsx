@@ -102,9 +102,15 @@ function Quiz() {
 
   const firstAnswerButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (!isLoading && !error && responseCode === 0)
+    if (!isLoading && !error && responseCode === 0 && !slider.isAnimating.state)
       firstAnswerButtonRef.current?.focus();
-  }, [displayContent, isLoading, error, responseCode]);
+  }, [
+    displayContent,
+    isLoading,
+    error,
+    responseCode,
+    slider.isAnimating.state,
+  ]);
 
   return (
     <>
@@ -129,8 +135,9 @@ function Quiz() {
               displayContent[slider.delayedIndex] &&
               displayContent[slider.delayedIndex]?.answers &&
               displayContent[slider.delayedIndex].answers.map(
-                (answer: Answer) => (
+                (answer: Answer, index: number) => (
                   <button
+                    ref={index === 0 ? firstAnswerButtonRef : undefined}
                     key={answer.value}
                     onClick={() => {
                       if (slider.isAnimating.state) return;
@@ -142,7 +149,7 @@ function Quiz() {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold
+                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold border-3
                     ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
                     `}
                   >
@@ -157,7 +164,7 @@ function Quiz() {
                   onClick={(e) => {
                     startNewQuiz();
                   }}
-                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2"
+                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold border-3 bg-color2"
                 >
                   New Quiz
                 </button>

@@ -9,7 +9,7 @@
 }
 
 .gradient-1 {
-  background: #c4dcbc;
+  background: #bad5af;
   background: linear-gradient(
     135deg,
     rgba(196, 220, 188, 1) 0%,
@@ -24,7 +24,7 @@ select {
 }
 
 button.common {
-  @apply text-color5 border-3 border-color5 focus-visible:outline-3 outline-color4 md:hover:scale-110;
+  @apply text-color5 border-color5 focus-visible:outline-2 lg:focus-visible:outline-3 outline-color4 md:hover:scale-110;
 }
 
 .triangle {
