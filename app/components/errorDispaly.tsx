@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Card from "./card";
 
 interface Props {
@@ -19,6 +20,10 @@ function getErrorMessage(responseCode: number, error: string) {
 }
 
 const ErrorDisplay = ({ responseCode, error }: Props) => {
+  const tryAgainRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    tryAgainRef.current?.focus();
+  }, []);
   return (
     <div className="grid grid-rows-[60%_40%] md:grid-rows-[80%_20%] w-dvw h-full px-[10dvw] overflow-hidden">
       <Card
@@ -28,9 +33,10 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
       />
       <section className="flex w-[80dvw] h-full items-center justify-center gap-10">
         <button
+          ref={tryAgainRef}
           onClick={() => window.location.reload()}
           className="
-            common px-4 py-1.25 rounded-lg font-semibold text-xs md:text-base"
+            common bg-color2 px-4 py-1.25 rounded-lg font-semibold text-xs md:text-base"
         >
           Try Again
         </button>

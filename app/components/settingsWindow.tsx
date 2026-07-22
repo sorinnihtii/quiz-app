@@ -127,7 +127,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               onClick={() => {
                 setIsSettingsVisble(false);
               }}
-              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125 focus:outline-3 outline-color5"
+              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125 focus-visible:outline-3 outline-color5"
             >
               <RxCross2 />
             </button>
@@ -185,7 +185,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[150%]
                       rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
                       transition-all duration-100 opacity-0 invisible
-                      group-focus:visible group-focus:opacity-100 group-focus:bottom-[160%]
+                      group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[160%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[160%]
                       md:group-hover:visible md:group-hover:opacity-100 md:group-hover:bottom-[160%]"
                   >
@@ -196,7 +196,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                     className="
                       absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full bg-amber-500
                       transition-all duration-100 opacity-0 invisible
-                      group-focus:visible group-focus:opacity-100 group-focus:bottom-[110%]
+                      group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[110%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[110%]
                       md:group-hover:visible md:group-hover:opacity-100 md:group-hover:bottom-[110%]"
                   ></span>
@@ -212,7 +212,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 onChange={(e) => {
                   setDisableSessionToken(e.target.checked);
                 }}
-                className="h-4 aspect-square focus:outline-3"
+                className="h-4 aspect-square focus-visible:outline-3"
               />
             </div>
             <div>
@@ -232,12 +232,12 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 onChange={(e) => {
                   setQuestionAmountController(e.target.value);
                 }}
-                className="w-12 border-2 text-center rounded-md focus:outline-3"
+                className="w-12 border-2 text-center rounded-md focus-visible:outline-3"
               />
             </div>
           </section>
 
-          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md">
+          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md *:bg-color2">
             <button
               type="button"
               aria-label="Save settings"

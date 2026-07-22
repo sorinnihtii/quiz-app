@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { decode } from "he";
 import CardSlider from "../components/cardSlider";
 import { useSettings } from "../storage/settings";
@@ -100,10 +100,16 @@ function Quiz() {
     slider.setDelayedIndex(0);
   }
 
+  const firstAnswerButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!isLoading && !error && responseCode === 0)
+      firstAnswerButtonRef.current?.focus();
+  }, [displayContent, isLoading, error, responseCode]);
+
   return (
     <>
-      {!error && !isLoading && responseCode === 0 ? (
-        <div className="grid grid-rows-[60%_40%] md:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
+      {displayContent && !error && !isLoading && responseCode === 0 ? (
+        <div className="grid grid-rows-[60%_40%] md:grid-rows-[70%_30%] lg:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
           <CardSlider
             content={displayContent}
             isAnimating={slider.isAnimating}
@@ -117,7 +123,7 @@ function Quiz() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-[5%] mx-[10dvw] sm:flex-row w-[80dvw] h-full items-center justify-center"
+            className="flex flex-col md:flex-row gap-[5%] mx-[10dvw] w-[80dvw] h-full items-center justify-center"
           >
             {displayContent &&
               displayContent[slider.delayedIndex] &&
@@ -136,7 +142,7 @@ function Quiz() {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    px-4 py-1.5 text-xs sm:text-base rounded-md font-semibold md:hover:scale-110 border-3 border-color5 focus:outline-3 outline-color4
+                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold
                     ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
                     `}
                   >
@@ -151,9 +157,7 @@ function Quiz() {
                   onClick={(e) => {
                     startNewQuiz();
                   }}
-                  className="
-                  px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2
-                  md:hover:scale-110 border-3 border-color5   focus:outline-3 outline-color4"
+                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold bg-color2"
                 >
                   New Quiz
                 </button>
