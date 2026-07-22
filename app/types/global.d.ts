@@ -1,3 +1,5 @@
+type Theme = "light" | "dark";
+
 type QuestionDifficulty = "any" | "easy" | "medium" | "hard";
 
 type QuestionType = "any" | "boolean" | "multiple";

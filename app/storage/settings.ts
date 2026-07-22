@@ -2,8 +2,10 @@ import { create } from "zustand";
 import getToken from "../tools/getToken";
 
 type AppSettings = {
-  preferredCategory: number;
-  setPreferredCategory: (newValue: number) => void;
+  theme: Theme;
+  setTheme: (newValue: Theme) => void;
+  questionCategory: number;
+  setQuestionCategory: (newValue: number) => void;
   questionAmount: number;
   setQuestionAmount: (newValue: number) => void;
   questionDifficulty: QuestionDifficulty;
@@ -19,9 +21,15 @@ type AppSettings = {
 
 const storageAvailable: boolean = typeof window !== "undefined";
 
-const preferredCategory = storageAvailable
-  ? Number(localStorage.getItem("preferredCategory"))
-    ? Number(localStorage.getItem("preferredCategory"))
+const theme = storageAvailable
+  ? (localStorage.getItem("theme") as Theme)
+    ? (localStorage.getItem("theme") as Theme)
+    : "light"
+  : "light";
+
+const questionCategory = storageAvailable
+  ? Number(localStorage.getItem("questionCategory"))
+    ? Number(localStorage.getItem("questionCategory"))
     : 9
   : 9;
 
@@ -48,8 +56,11 @@ const disableSessionToken = storageAvailable
   : false;
 
 export const useSettings = create<AppSettings>((set) => ({
-  preferredCategory: preferredCategory,
-  setPreferredCategory: (newValue) => set({ preferredCategory: newValue }),
+  theme: theme,
+  setTheme: (newValue: Theme) => set({ theme: newValue }),
+
+  questionCategory: questionCategory,
+  setQuestionCategory: (newValue) => set({ questionCategory: newValue }),
 
   questionAmount: questionAmount,
   setQuestionAmount: (newValue) => set({ questionAmount: newValue }),

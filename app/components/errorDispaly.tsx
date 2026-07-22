@@ -30,7 +30,7 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
         <button
           onClick={() => window.location.reload()}
           className="
-            common text-xs md:text-base"
+            common px-4 py-1.25 rounded-lg font-semibold text-xs md:text-base"
         >
           Try Again
         </button>

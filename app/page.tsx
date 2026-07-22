@@ -13,8 +13,8 @@ import CardSliderArrowButton from "./components/cardSliderArrowButton";
 export default function Home() {
   const router = useRouter();
 
-  const preferredCategory = useSettings((s) => s.preferredCategory);
-  const setPreferredCategory = useSettings((s) => s.setPreferredCategory);
+  const questionCategory = useSettings((s) => s.questionCategory);
+  const setQuestionCategory = useSettings((s) => s.setQuestionCategory);
   const questionDifficulty = useSettings((s) => s.questionDifficulty);
   const setQuestionDifficulty = useSettings((s) => s.setQuestionDifficulty);
   const questionType = useSettings((s) => s.questionType);
@@ -25,34 +25,26 @@ export default function Home() {
     "trivia_categories",
   );
   const categories = data?.trivia_categories;
-
   const slider = useCardSlider(categories?.length - 1);
 
   useEffect(() => {
-    if (preferredCategory && categories?.length)
+    if (questionCategory && categories?.length)
       categories.map((category: DisplayContent, index: number) => {
-        if (category.id === preferredCategory) {
+        if (category.id === questionCategory) {
           slider.setCurrentIndex(index);
           slider.setDelayedIndex(index);
         }
       });
-  }, [categories, preferredCategory]);
+  }, [categories, questionCategory]);
 
   function startQuiz() {
-    const categoryParameter = `?category=${categories[slider.currentIndex].id}`;
-    const difficultyParameter =
-      questionDifficulty != "any" ? `&difficulty=${questionDifficulty}` : "";
-    const typeParameter = questionType != "any" ? `&type=${questionType}` : "";
-
-    setPreferredCategory(categories[slider.currentIndex].id);
+    setQuestionCategory(categories[slider.currentIndex].id);
     localStorage.setItem(
-      "preferredCategory",
+      "questionCategory",
       categories[slider.currentIndex].id,
     );
 
-    router.push(
-      `/quiz${categoryParameter}${difficultyParameter}${typeParameter}`,
-    );
+    router.push("/quiz");
   }
 
   return (
