@@ -24,17 +24,24 @@ export default function Home() {
     "https://opentdb.com/api_category.php",
     "trivia_categories",
   );
-  const categories = data?.trivia_categories;
+  const categories = data?.trivia_categories
+    ? [{ id: 0, name: "Any Category" }, ...data.trivia_categories]
+    : [];
+
   const slider = useCardSlider(categories?.length - 1);
 
   useEffect(() => {
-    if (questionCategory && categories?.length)
+    if (questionCategory && categories?.length) {
+      let found = false;
       categories.map((category: DisplayContent, index: number) => {
         if (category.id === questionCategory) {
+          found = true;
           slider.setCurrentIndex(index);
           slider.setDelayedIndex(index);
         }
       });
+      if (found === false) localStorage.removeItem("questionCategory");
+    }
   }, [categories, questionCategory]);
 
   function startQuiz() {

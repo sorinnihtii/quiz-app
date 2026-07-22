@@ -3,11 +3,9 @@ export default async function getToken() {
     const res = await fetch(
       "https://opentdb.com/api_token.php?command=request",
     );
-    console.log("token res", res);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (!data?.token) throw new Error(`Error Code ${data.response_code}`);
-    console.log("gettoken data", data);
     if (typeof window !== "undefined")
       localStorage.setItem("sessionToken", data.token);
     return data.token;

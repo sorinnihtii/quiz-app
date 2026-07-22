@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import getToken from "../tools/getToken";
+import getToken from "../tools/getSessionToken";
 
 type AppSettings = {
   theme: Theme;
@@ -21,39 +21,70 @@ type AppSettings = {
 
 const storageAvailable: boolean = typeof window !== "undefined";
 
+const cachedTheme = storageAvailable ? localStorage.getItem("theme") : "";
+let valid = cachedTheme === "light" || cachedTheme === "dark";
 const theme = storageAvailable
-  ? (localStorage.getItem("theme") as Theme)
-    ? (localStorage.getItem("theme") as Theme)
+  ? valid
+    ? (cachedTheme as Theme)
     : "light"
   : "light";
+if (!valid && storageAvailable) localStorage.removeItem("theme");
 
+const cachedCategory = storageAvailable
+  ? localStorage.getItem("questionCategory")
+  : "";
+valid = Boolean(Number(cachedCategory));
 const questionCategory = storageAvailable
-  ? Number(localStorage.getItem("questionCategory"))
-    ? Number(localStorage.getItem("questionCategory"))
-    : 9
-  : 9;
+  ? valid
+    ? Number(cachedCategory)
+    : 0
+  : 0;
+if (!valid && storageAvailable) localStorage.removeItem("questionCategory");
 
+const cachedAmount = storageAvailable
+  ? localStorage.getItem("questionAmount")
+  : "";
+valid = Boolean(Number(cachedAmount));
 const questionAmount = storageAvailable
-  ? Number(localStorage.getItem("questionAmount"))
-    ? Number(localStorage.getItem("questionAmount"))
+  ? valid
+    ? Number(cachedAmount)
     : 10
   : 10;
+if (!valid && storageAvailable) localStorage.removeItem("questionAmount");
 
+const cachedDifficulty = storageAvailable
+  ? localStorage.getItem("questionDifficulty")
+  : "";
+valid =
+  cachedDifficulty === "any" ||
+  cachedDifficulty === "easy" ||
+  cachedDifficulty === "medium" ||
+  cachedDifficulty === "hard";
 const questionDifficulty = storageAvailable
-  ? (localStorage.getItem("questionDifficulty") as QuestionDifficulty)
-    ? (localStorage.getItem("questionDifficulty") as QuestionDifficulty)
+  ? valid
+    ? (cachedDifficulty as QuestionDifficulty)
     : "any"
   : "any";
+if (!valid && storageAvailable) localStorage.removeItem("questionDifficulty");
 
+const cachedType = storageAvailable ? localStorage.getItem("questionType") : "";
+valid =
+  cachedType === "any" || cachedType === "boolean" || cachedType === "multiple";
 const questionType = storageAvailable
-  ? (localStorage.getItem("questionType") as QuestionType)
-    ? (localStorage.getItem("questionType") as QuestionType)
+  ? valid
+    ? (cachedType as QuestionType)
     : "any"
   : "any";
+if (!valid && storageAvailable) localStorage.removeItem("questionType");
 
+const cachedDisableToken = storageAvailable
+  ? localStorage.getItem("disableSessionToken")
+  : "";
+valid = cachedDisableToken === "true" || cachedDisableToken === "false";
 const disableSessionToken = storageAvailable
-  ? localStorage.getItem("disableSessionToken") === "true"
+  ? cachedDisableToken === "true"
   : false;
+if (!valid && storageAvailable) localStorage.removeItem("disableSessionToken");
 
 export const useSettings = create<AppSettings>((set) => ({
   theme: theme,

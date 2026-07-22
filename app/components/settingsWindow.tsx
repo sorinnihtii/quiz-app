@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { FiAlertCircle } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import { useSettings } from "../storage/settings";
-import getToken from "../tools/getToken";
+import getNewToken from "../tools/getNewSessionToken";
 
 interface Props {
   isSettingsVisible: boolean;
@@ -29,7 +29,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
   const disableSessionToken = useSettings((s) => s.disableSessionToken);
   const setDisableSessionToken = useSettings((s) => s.setDisableSessionToken);
   const sessionToken = useSettings((s) => s.sessionToken);
-  const setSessionToken = useSettings((s) => s.setSessionToken);
+
   const initSessionToken = useSettings((s) => s.initSessionToken);
 
   useEffect(() => {
@@ -46,22 +46,6 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
     if (isSettingsVisible) firstInputRef.current?.focus();
   }, [isSettingsVisible]);
 
-  async function getNewToken() {
-    try {
-      localStorage.removeItem("sessionToken");
-      const newToken = await getToken();
-      if (!newToken) return;
-      setSessionToken(newToken);
-    } catch (err) {
-      if (err instanceof Error) {
-        window.alert(`Failed to get new token: ${err.message}`);
-      }
-      console.error(err);
-    } finally {
-      window.alert("You succesffully received a new token");
-    }
-  }
-
   async function resetToken(token: string) {
     try {
       const res = await fetch(
@@ -72,6 +56,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
       if (err instanceof Error) {
         window.alert(`Failed to reset token. ${err.name}:${err.message}`);
       }
+      console.error(err);
     } finally {
       window.alert("Token reset succesfully");
     }

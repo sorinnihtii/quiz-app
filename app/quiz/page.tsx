@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import useFetch from "../tools/useFetch";
 import useCardSlider from "../tools/useCardSliderStates";
 import ErrorDisplay from "../components/errorDispaly";
+import getNewToken from "../tools/getNewSessionToken";
 
 function shuffle(array: Answer[]) {
   const shuffled = [...array];
@@ -23,8 +24,11 @@ function shuffle(array: Answer[]) {
 
 function Quiz() {
   const questionCategory = useSettings((s) => s.questionCategory);
+  const setQuestionCategory = useSettings((s) => s.setQuestionCategory);
   const questionDifficulty = useSettings((s) => s.questionDifficulty);
+  const setQuestionDifficulty = useSettings((s) => s.setQuestionDifficulty);
   const questionType = useSettings((s) => s.questionType);
+  const setQuestionType = useSettings((s) => s.setQuestionType);
   const disableSessionToken = useSettings((s) => s.disableSessionToken);
   const questionAmount = useSettings((s) => s.questionAmount);
   const sessionToken = useSettings((s) => s.sessionToken);
@@ -34,24 +38,31 @@ function Quiz() {
     initSessionToken();
   }, [initSessionToken]);
 
-  const amountParameter = questionAmount
+  const amountParameter = (questionAmount as number)
     ? `?amount=${questionAmount}`
     : "?amount=10";
-  const categoryParameter = questionCategory
-    ? `&category=${questionCategory}`
-    : "&category=9";
+  const categoryParameter =
+    (questionCategory as number) && questionCategory !== 0
+      ? `&category=${questionCategory}`
+      : "";
   const difficultyParameter =
-    questionDifficulty && questionDifficulty !== "any"
+    (questionDifficulty as QuestionDifficulty) && questionDifficulty !== "any"
       ? `&difficulty=${questionDifficulty}`
       : "";
   const typeParameter =
-    questionType && questionType !== "any" ? `&type=${questionType}` : "";
+    (questionType as QuestionType) && questionType !== "any"
+      ? `&type=${questionType}`
+      : "";
   const tokenParameter =
-    sessionToken && !disableSessionToken ? `&token=${sessionToken}` : "";
+    (sessionToken as string) && !disableSessionToken
+      ? `&token=${sessionToken}`
+      : "";
 
   const { data, isLoading, error, responseCode, refetch } = useFetch(
     `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
   );
+
+  console.log(questionCategory);
 
   const displayContent = useMemo(() => {
     if (!data) return [];
@@ -111,6 +122,15 @@ function Quiz() {
     responseCode,
     slider.isAnimating.state,
   ]);
+
+  useEffect(() => {
+    if (responseCode === 3) {
+      window.alert(
+        "Your session token is invalid or expired. Attempting to fetch a new one...",
+      );
+      getNewToken();
+    }
+  }, [responseCode, questionCategory, displayContent]);
 
   return (
     <>
