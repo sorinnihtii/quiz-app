@@ -25,7 +25,7 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
     tryAgainRef.current?.focus();
   }, []);
   return (
-    <div className="grid grid-rows-[60%_40%] md:grid-rows-[80%_20%] w-dvw h-full px-[10dvw] overflow-hidden">
+    <div className="grid grid-rows-[80%_20%] w-dvw h-full px-[10dvw] overflow-hidden">
       <Card
         title={error.message}
         subtitle={getErrorMessage(responseCode, error?.message)}
@@ -36,7 +36,7 @@ const ErrorDisplay = ({ responseCode, error }: Props) => {
           ref={tryAgainRef}
           onClick={() => window.location.reload()}
           className="
-            common bg-color2 px-4 py-1.25 rounded-lg font-semibold border-2 text-xs md:text-base"
+            common bg-color2 px-4 py-1.25 rounded-lg font-semibold border-2 text-xs xl:text-sm 2xl:text-base"
         >
           Try Again
         </button>

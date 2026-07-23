@@ -44,7 +44,7 @@ if (!valid && storageAvailable) localStorage.removeItem("questionCategory");
 const cachedAmount = storageAvailable
   ? localStorage.getItem("questionAmount")
   : "";
-valid = Boolean(Number(cachedAmount));
+valid = Boolean(Number(cachedAmount) >= 5 && Number(cachedAmount) <= 50);
 const questionAmount = storageAvailable
   ? valid
     ? Number(cachedAmount)

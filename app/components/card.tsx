@@ -33,7 +33,7 @@ const Card = ({
       onTransitionEnd={onTransitionEnd}
     >
       <h1
-        className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold ${titleStyles}`}
+        className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-semibold wrap-break-word ${titleStyles}`}
       >
         {title}
       </h1>

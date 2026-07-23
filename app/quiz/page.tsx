@@ -130,12 +130,14 @@ function Quiz() {
     }
   }, [responseCode, questionCategory, displayContent]);
 
+  console.log(displayContent);
+
   const theme = useSettings((s) => s.theme);
 
   return (
     <>
       {displayContent && !error && !isLoading && responseCode === 0 ? (
-        <div className="grid grid-rows-[60%_40%] md:grid-rows-[70%_30%] lg:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
+        <div className="grid grid-rows-[50%_50%] sm:grid-rows-[60%_40%] xl:grid-rows-[80%_20%] w-dvw h-full overflow-hidden">
           <CardSlider
             content={displayContent}
             isAnimating={slider.isAnimating}
@@ -149,7 +151,7 @@ function Quiz() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 100 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col md:flex-row gap-[5%] mx-[10dvw] w-[80dvw] h-full items-center justify-center"
+            className="flex flex-col xl:flex-row gap-[5%] mx-[10dvw] w-[80dvw] h-full items-center justify-center"
           >
             {displayContent &&
               displayContent[slider.delayedIndex] &&
@@ -169,7 +171,7 @@ function Quiz() {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold border-2
+                    common px-4 py-1.5 text-xs xl:text-sm 2xl:text-base rounded-md font-semibold border-2
                     ${
                       slider.isAnimating.state
                         ? answer.correct
@@ -194,7 +196,9 @@ function Quiz() {
                   onClick={(e) => {
                     startNewQuiz();
                   }}
-                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold border-2 bg-color2"
+                  className="
+                    common px-4 py-1.5 rounded-md font-semibold border-2 bg-color2
+                    text-xs xl:text-sm 2xl:text-base"
                 >
                   New Quiz
                 </button>
