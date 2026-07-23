@@ -24,6 +24,8 @@ function copyToClipboard(text: string) {
 }
 
 const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
+  const theme = useSettings((s) => s.theme);
+  const setTheme = useSettings((s) => s.setTheme);
   const questionAmount = useSettings((s) => s.questionAmount);
   const setQuestionAmount = useSettings((s) => s.setQuestionAmount);
   const disableSessionToken = useSettings((s) => s.disableSessionToken);
@@ -72,6 +74,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
     }
     setQuestionAmount(Number(questionAmountController));
     try {
+      localStorage.setItem("theme", theme);
       localStorage.setItem("questionAmount", questionAmount.toString());
       localStorage.setItem(
         "disableSessionToken",
@@ -162,14 +165,14 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 <button className="group relative">
                   <FiAlertCircle
                     aria-hidden="true"
-                    className="text-amber-500"
+                    className="text-amber-400"
                   />
                   <span
                     id="token-help"
                     role="tooltip"
                     className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[150%]
-                      rounded-md border-2 border-amber-500 text-xs bg-color3 text-color5 font-semibold 
+                      rounded-md border-2 border-amber-400 text-xs bg-color3 text-color5 font-semibold 
                       transition-all duration-100 opacity-0 invisible
                       group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[160%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[160%]
@@ -180,7 +183,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                   </span>
                   <span
                     className="
-                      absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full bg-amber-500
+                      absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full bg-amber-400
                       transition-all duration-100 opacity-0 invisible
                       group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[110%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[110%]
@@ -221,9 +224,28 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 className="w-12 border-2 text-center rounded-md focus-visible:outline-3"
               />
             </div>
+            <div>
+              <h3>Theme</h3>
+              <div className="*:px-3 *:py-px *:border-y-2 divide-x-2">
+                <button
+                  type="button"
+                  onClick={() => setTheme("light")}
+                  className={`rounded-l-md border-l-2 ${theme === "light" ? "bg-color2" : "bg-transparent"}`}
+                >
+                  Light
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTheme("dark")}
+                  className={`rounded-r-md border-r-2 ${theme === "dark" ? "bg-color2" : "bg-transparent"}`}
+                >
+                  Dark
+                </button>
+              </div>
+            </div>
           </section>
 
-          <section className="justify-center *:px-3 *:py-0.5 *:font-medium *:rounded-md *:bg-color2 *:border-2">
+          <section className="justify-center *:px-3 *:py-0.5 *:rounded-md *:bg-color2 *:border-2">
             <button
               type="button"
               aria-label="Save settings"

@@ -132,6 +132,8 @@ function Quiz() {
     }
   }, [responseCode, questionCategory, displayContent]);
 
+  const theme = useSettings((s) => s.theme);
+
   return (
     <>
       {displayContent && !error && !isLoading && responseCode === 0 ? (
@@ -170,7 +172,17 @@ function Quiz() {
                     }}
                     className={`
                     common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold border-3
-                    ${slider.isAnimating.state ? (answer.correct ? "bg-green-400" : "bg-red-400") : "bg-color2"}
+                    ${
+                      slider.isAnimating.state
+                        ? answer.correct
+                          ? theme === "light"
+                            ? "bg-green-400"
+                            : "bg-green-600"
+                          : theme === "light"
+                            ? "bg-red-400"
+                            : "bg-red-600"
+                        : "bg-color2"
+                    }
                     `}
                   >
                     {decode(answer.value)}

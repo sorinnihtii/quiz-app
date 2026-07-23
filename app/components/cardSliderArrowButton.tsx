@@ -27,7 +27,7 @@ const CardSliderArrowButton = ({ slider, direction }: Props) => {
       >
         <span
           className="
-            triangle absolute h-4.5 md:h-5.25 lg:h-6.25 aspect-square rotate-0
+            triangle absolute h-5.25 md:h-5.75 lg:h-6.5 aspect-square rotate-0
             top-13/24 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-color2"
         ></span>
       </span>

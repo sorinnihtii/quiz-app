@@ -37,7 +37,7 @@ const Card = ({
         {title}
       </h1>
       <h2
-        className={`text-xs sm:text-sm lg:text-base xl:text-lg ${subtitleStyles}`}
+        className={`text-xs sm:text-sm lg:text-base xl:text-lg text-color5 ${subtitleStyles}`}
         dangerouslySetInnerHTML={subtitle ? { __html: subtitle } : undefined}
       />
     </div>

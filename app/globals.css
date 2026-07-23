@@ -1,11 +1,27 @@
 @import "tailwindcss";
 
+:root {
+  --color1: #bad5af;
+  --color2: #fae275;
+  --color3: #ecf8fd;
+  --color4: #593c36;
+  --color5: #212738;
+}
+
+.dark {
+  --color1: #121715;
+  --color2: #705a48;
+  --color3: #1e2433;
+  --color4: #fae275;
+  --color5: #daf1fb;
+}
+
 @theme {
-  --color-color1: #bad5af;
-  --color-color2: #fae275;
-  --color-color3: #ecf8fd;
-  --color-color4: #593c36;
-  --color-color5: #212738;
+  --color-color1: var(--color1);
+  --color-color2: var(--color2);
+  --color-color3: var(--color3);
+  --color-color4: var(--color4);
+  --color-color5: var(--color5);
 }
 
 .gradient-1 {
@@ -18,9 +34,19 @@
   );
 }
 
+.gradient-2 {
+  background: #221c22;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 28, 34, 1) 0%,
+    rgba(22, 18, 23, 1) 50%,
+    rgba(11, 9, 11, 1) 100%
+  );
+}
+
 button,
 select {
-  @apply cursor-pointer opacity-100;
+  @apply cursor-pointer opacity-98;
 }
 
 button.common {
