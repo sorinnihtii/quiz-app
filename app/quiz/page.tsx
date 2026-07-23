@@ -171,7 +171,7 @@ function Quiz() {
                       if (answer.correct) setScore((prev) => prev + 1);
                     }}
                     className={`
-                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold border-3
+                    common px-4 py-1.5 text-xs md:text-sm lg:text-base rounded-md font-semibold border-2
                     ${
                       slider.isAnimating.state
                         ? answer.correct
@@ -196,7 +196,7 @@ function Quiz() {
                   onClick={(e) => {
                     startNewQuiz();
                   }}
-                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold border-3 bg-color2"
+                  className="common px-4 py-1.5 rounded-md text-xs md:text-sm lg:text-base font-semibold border-2 bg-color2"
                 >
                   New Quiz
                 </button>
@@ -207,7 +207,7 @@ function Quiz() {
         <ErrorDisplay responseCode={responseCode} error={error} />
       ) : (
         isLoading && (
-          <div className="flex items-center justify-center h-full font-semibold text-color5 text-xl">
+          <div className="flex items-center justify-center h-full font-medium text-color5 text-xl">
             Loading...
           </div>
         )

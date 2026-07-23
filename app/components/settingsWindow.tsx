@@ -104,7 +104,8 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
             text-xs sm:text-sm xl:text-base
             ring-2 ring-color5/5 border-3 border-color5 text-color5 rounded-xl bg-color3
             [&>section]:flex [&>section]:items-center [&>section]:py-5
-            [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5"
+            [&>section]:gap-x-3 md:[&>section]:gap-x-4 lg:[&>section]:gap-x-5
+            [&_input]:focus-visible:outline-3 [&_input]:outline-color4 [&_button]:focus-visible:outline-3 [&_button]:outline-color4"
         >
           <section className="relative justify-center">
             <h1 className="font-semibold text-base sm:text-lg lg:text-xl">
@@ -116,7 +117,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               onClick={() => {
                 setIsSettingsVisble(false);
               }}
-              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125 focus-visible:outline-3 outline-color5"
+              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125"
             >
               <RxCross2 />
             </button>
@@ -125,7 +126,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
           <section
             className="
               flex-col justify-start gap-y-5
-              [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%] [&_input]:outline-color5
+              [&>div]:flex [&>div]:justify-start [&>div]:items-center [&>div]:w-full [&>div]:gap-3 [&>div]:px-[10%]
               [&>div>h3]:before:content-['>'] [&>div>h3]:before:mx-4 [&>div>label]:before:content-['>'] [&>div>label]:before:mx-4"
           >
             <div role="group" aria-labelledby="session-token-heading">
@@ -172,7 +173,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                     role="tooltip"
                     className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[150%]
-                      rounded-md border-2 border-amber-400 text-xs bg-color3 text-color5 font-semibold 
+                      rounded-md border-2 border-amber-400 text-xs bg-color3 text-color5 font-medium tracking-wider 
                       transition-all duration-100 opacity-0 invisible
                       group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[160%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[160%]
@@ -201,7 +202,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 onChange={(e) => {
                   setDisableSessionToken(e.target.checked);
                 }}
-                className="h-4 aspect-square focus-visible:outline-3"
+                className="h-4 aspect-square border-2 accent-color2 focus-visible:outline-3"
               />
             </div>
             <div>

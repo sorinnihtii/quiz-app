@@ -10,9 +10,9 @@
 
 .dark {
   --color1: #05090f;
-  --color2: #604347;
+  --color2: #155f66;
   --color3: #1e2433;
-  --color4: #fae275;
+  --color4: #c1a5a9;
   --color5: #daf1fb;
 }
 
@@ -62,16 +62,4 @@ button.common {
 
 .slide-left {
   transform: translateX(100dvw);
-}
-
-@keyframes hovering {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5%);
-  }
-  100% {
-    transform: translateY(0);
-  }
 }

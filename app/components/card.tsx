@@ -26,7 +26,8 @@ const Card = ({
       inert={inert}
       className={`
         flex flex-col items-center justify-center h-full w-[80dvw] gap-2
-        rounded-2xl text-center bg-color3 *:w-[75%] *:sm:w-[70%] *:md:w-[65%] *:lg:w-[60%] *:xl:w-[55%] *:2xl:w-[50%] border-4 border-color5
+        rounded-2xl text-center bg-color3 border-4 border-color5
+        *:w-[75%] *:sm:w-[70%] *:md:w-[65%] *:lg:w-[60%] *:xl:w-[55%] *:2xl:w-[50%] **:focus-visible:outline-2 **:focus-visible:outline-color4
         ${styles} ${animation}
         `}
       onTransitionEnd={onTransitionEnd}
