@@ -74,7 +74,7 @@ export default function Home() {
             className="
               grid grid-rows-3 md:grid-cols-3 sm:grid-rows-1 w-[80dvw] mx-[10dvw] my-auto gap-4
               [&>div]:flex [&>div]:items-center [&>div]:justify-center
-              [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border [&>div>select]:font-medium [&>div>select]:rounded-md
+              [&>div>select]:w-35 [&>div>select]:px-3 [&>div>select]:py-1 [&>div>select]:border-2 [&>div>select]:font-medium [&>div>select]:rounded-md
               [&>div>select]:text-xs [&>div>select]:text-color5 [&>div>select]:bg-color2 [&>div>select]:focus:scale-110 md:[&>div>select]:hover:scale-110 
               [&>div>select]:focus-visible:outline-2 lg:[&>div>select]:focus-visible:outline-3 [&>div>select]:focus-visible:outline-color4"
           >
