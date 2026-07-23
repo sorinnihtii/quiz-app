@@ -9,7 +9,7 @@
 }
 
 .dark {
-  --color1: #05090f;
+  --color1: #070c14;
   --color2: #155f66;
   --color3: #1e2433;
   --color4: #c1a5a9;
@@ -35,17 +35,18 @@
 }
 
 .gradient-2 {
-  background: #05090f;
+  background: #070c14;
   background: linear-gradient(
     135deg,
-    rgba(5, 9, 15, 1) 0%,
-    rgba(0, 0, 0, 1) 100%
+    rgba(7, 12, 20, 1) 0%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(7, 12, 20, 1) 100%
   );
 }
 
 button,
 select {
-  @apply cursor-pointer opacity-99;
+  @apply cursor-pointer;
 }
 
 button.common {
