@@ -163,7 +163,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 >
                   new
                 </button>
-                <button className="group relative">
+                <button type="button" className="group relative">
                   <FiAlertCircle
                     aria-hidden="true"
                     className="text-amber-400"
