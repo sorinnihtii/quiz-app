@@ -15,6 +15,10 @@ const About = () => {
       subtitle:
         "Session tokens are what allows the app to fetch different questions for each quiz you start. You are automatically assigned a session token which is then saved in the local storage of your browser. Session tokens are deleted after 6 hours of inactivity which may require you to create a new token. Additionally, once you fetched all the available quesitons on a specific token, the app won't be able to fetch any more quizes unless you reset it. You can manage your token in the settings menu. Avoid using a large amount of questions per quiz, as trying to fetch more questions than there are available results in an error.",
     },
+    {
+      name: "Curious?",
+      subtitle: `You can find more projects made by me on my <a class="font-semibold underline" href="https://github.com/sorinnihtii">GitHub Page</a>`,
+    },
   ];
 
   const slider = useCardSliderStates(displayContent.length - 1);
