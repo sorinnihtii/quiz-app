@@ -29,7 +29,6 @@ const theme = storageAvailable
     : "light"
   : "light";
 if (!valid && storageAvailable) localStorage.removeItem("theme");
-console.log(cachedTheme, theme);
 
 const cachedCategory = storageAvailable
   ? localStorage.getItem("questionCategory")

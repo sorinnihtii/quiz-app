@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import useFetch from "./tools/useFetch";
 import useCardSlider from "./tools/useCardSliderStates";
 import ErrorDisplay from "./components/errorDispaly";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CardSliderArrowButton from "./components/cardSliderArrowButton";
 
 export default function Home() {
@@ -20,6 +20,8 @@ export default function Home() {
   const questionType = useSettings((s) => s.questionType);
   const setQuestionType = useSettings((s) => s.setQuestionType);
 
+  const [found, setFound] = useState(false);
+
   const { data, isLoading, error, responseCode } = useFetch(
     "https://opentdb.com/api_category.php",
     "trivia_categories",
@@ -31,18 +33,22 @@ export default function Home() {
   const slider = useCardSlider(categories?.length - 1);
 
   useEffect(() => {
-    if (questionCategory && categories?.length) {
-      let found = false;
+    if (questionCategory && categories?.length && found === false) {
+      let localFound: boolean = false;
       categories.map((category: DisplayContent, index: number) => {
         if (category.id === questionCategory) {
-          found = true;
+          localFound = true;
           slider.setCurrentIndex(index);
           slider.setDelayedIndex(index);
+          return;
         }
       });
-      if (found === false) localStorage.removeItem("questionCategory");
+      setFound(localFound);
+      if (localFound === false) {
+        localStorage.removeItem("questionCategory");
+      }
     }
-  }, [categories, questionCategory]);
+  }, [categories.length, questionCategory, slider]);
 
   function startQuiz() {
     setQuestionCategory(categories[slider.currentIndex].id);

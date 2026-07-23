@@ -45,6 +45,7 @@ export default function useFetch(url: string, storage?: string) {
       }
 
       setData(data);
+
       if (storage) {
         localStorage.setItem(storage, JSON.stringify(data));
       }

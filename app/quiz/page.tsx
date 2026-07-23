@@ -62,8 +62,6 @@ function Quiz() {
     `https://opentdb.com/api.php${amountParameter}${categoryParameter}${difficultyParameter}${typeParameter}${tokenParameter}`,
   );
 
-  console.log(questionCategory);
-
   const displayContent = useMemo(() => {
     if (!data) return [];
 
