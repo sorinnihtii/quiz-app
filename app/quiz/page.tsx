@@ -177,10 +177,10 @@ function Quiz() {
                         ? answer.correct
                           ? theme === "light"
                             ? "bg-green-400"
-                            : "bg-green-600"
+                            : "bg-green-800"
                           : theme === "light"
                             ? "bg-red-400"
-                            : "bg-red-600"
+                            : "bg-red-800"
                         : "bg-color2"
                     }
                     `}
