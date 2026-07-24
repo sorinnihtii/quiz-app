@@ -17,7 +17,7 @@ const About = () => {
     },
     {
       name: "Curious?",
-      subtitle: `You can find more projects made by me on my <a class="font-semibold underline" href="https://github.com/sorinnihtii">GitHub Page</a>`,
+      subtitle: `You can find more of my projects on my <a class="font-semibold underline" href="https://github.com/sorinnihtii">GitHub Page</a>`,
     },
   ];
 

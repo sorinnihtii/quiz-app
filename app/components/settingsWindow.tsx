@@ -117,7 +117,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               onClick={() => {
                 setIsSettingsVisble(false);
               }}
-              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl md:hover:scale-125"
+              className="absolute right-0 top-8 -translate-y-1/2 -translate-x-1/2 text-3xl transition-all duration-100 md:hover:scale-125"
             >
               <RxCross2 />
             </button>
@@ -134,7 +134,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               <div
                 className="
                   flex items-center gap-3
-                  [&>button]:underline [&>button]:font-semibold md:[&>button]:hover:translate-y-[-10%] [&>button]:duration-200"
+                  [&>button]:underline [&>button]:font-semibold md:[&>button]:hover:translate-y-[-10%] [&>button]:duration-150"
               >
                 <button
                   type="button"
@@ -174,7 +174,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                     className="
                       absolute w-60 px-2 py-1 left-1/2 -translate-x-1/2 bottom-[150%]
                       rounded-md border-2 border-amber-400 text-xs bg-color3 text-color5 font-medium tracking-wider 
-                      transition-all duration-100 opacity-0 invisible
+                      transition-all duration-150 opacity-0 invisible
                       group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[160%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[160%]
                       md:group-hover:visible md:group-hover:opacity-100 md:group-hover:bottom-[160%]"
@@ -185,7 +185,7 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                   <span
                     className="
                       absolute triangle rotate-180 left-1/2 -translate-x-1/2 w-3 h-2 bottom-full bg-amber-400
-                      transition-all duration-100 opacity-0 invisible
+                      transition-all  150 opacity-0 invisible
                       group-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:bottom-[110%]
                       group-active:visible group-active:opacity-100 group-active:bottom-[110%]
                       md:group-hover:visible md:group-hover:opacity-100 md:group-hover:bottom-[110%]"
@@ -202,7 +202,8 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
                 onChange={(e) => {
                   setDisableSessionToken(e.target.checked);
                 }}
-                className="h-4 aspect-square border-2 accent-color2 focus-visible:outline-3"
+                className="h-4 aspect-square accent-color2 focus-visible:outline-3
+                transition-all duration-100 hover:brightness-80"
               />
             </div>
             <div>
@@ -227,18 +228,18 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
             </div>
             <div>
               <h3>Theme</h3>
-              <div className="*:px-3 *:py-px *:border-y-2 divide-x-2">
+              <div className="divide-x-2 *:px-3 *:py-px *:border-y-2 *:transition-colors *:duration-100">
                 <button
                   type="button"
                   onClick={() => setTheme("light")}
-                  className={`rounded-l-md border-l-2 ${theme === "light" ? "bg-color2" : "bg-transparent"}`}
+                  className={`rounded-l-md border-l-2 ${theme === "light" ? "bg-color2 hover:bg-color2/75" : "bg-transparent hover:bg-color2/25"}`}
                 >
                   Light
                 </button>
                 <button
                   type="button"
                   onClick={() => setTheme("dark")}
-                  className={`rounded-r-md border-r-2 ${theme === "dark" ? "bg-color2" : "bg-transparent"}`}
+                  className={`rounded-r-md border-r-2 ${theme === "dark" ? "bg-color2 hover:bg-color2/75" : "bg-transparent hover:bg-color2/25"}`}
                 >
                   Dark
                 </button>
@@ -259,10 +260,13 @@ const SettingsWindow = ({ isSettingsVisible, setIsSettingsVisble }: Props) => {
               aria-label="Reset settings to default"
               type="button"
               onClick={() => {
+                setTheme("light");
                 setQuestionAmount(10);
                 setQuestionAmountController("10");
                 setDisableSessionToken(false);
-                saveChanges();
+                localStorage.removeItem("theme");
+                localStorage.removeItem("questionAmount");
+                localStorage.removeItem("disableSessionToken");
                 firstInputRef.current?.focus();
               }}
               className="common"

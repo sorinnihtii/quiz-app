@@ -46,11 +46,12 @@
 
 button,
 select {
-  @apply cursor-pointer;
+  @apply cursor-pointer opacity-99;
 }
 
 button.common {
-  @apply text-color5 border-color5 focus-visible:outline-2 lg:focus-visible:outline-3 outline-color4 md:hover:scale-110;
+  @apply text-color5 border-color5 focus-visible:outline-2 lg:focus-visible:outline-3 outline-color4
+  transition-all duration-50 md:hover:scale-110;
 }
 
 .triangle {
